@@ -1,0 +1,26 @@
+{
+  "name": "step-marketplace",
+  "version": "1.0.0",
+  "description": "This project is my diploma project which reflect my experience in Node.js, TS, RDBS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ViktoriaMalanich/step-marketplace.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ViktoriaMalanich/step-marketplace/issues"
+  },
+  "homepage": "https://github.com/ViktoriaMalanich/step-marketplace#readme",
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2"
+  }
+}
