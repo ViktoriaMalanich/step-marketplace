@@ -18,6 +18,9 @@ cd step-marketplace
 ```
 npm install 
 ```
+### Set .env
+Rename .example.env to .env and set your own values
+
 ### Run in development mode
 ```
 npm run start:dev
