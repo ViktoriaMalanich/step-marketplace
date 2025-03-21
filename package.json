@@ -4,7 +4,8 @@
   "description": "This project is my diploma project which reflect my experience in Node.js, TS, RDBS",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""
   },
   "repository": {
     "type": "git",
@@ -21,6 +22,8 @@
     "express": "^4.21.2"
   },
   "devDependencies": {
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.9",
     "typescript": "^5.8.2"
   }
 }
