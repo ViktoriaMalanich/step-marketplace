@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""
+    "build": "npx tsc",
+    "migration:up": "npx typeorm migration:run -d dist/dbconnection.js",
+    "migration:down": "npx typeorm migration:revert -d dist/dbconnection.js",
+    "migration:create": "npx typeorm migration:create -n",
+    "start:dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""   
   },
   "repository": {
     "type": "git",

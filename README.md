@@ -21,6 +21,15 @@ npm install
 ### Set .env
 Rename .example.env to .env and set your own values
 
+### Build an application
+```
+npm run build
+```
+### Run migration
+```
+npm run migration:up
+```
+
 ### Run in development mode
 ```
 npm run start:dev
