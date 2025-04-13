@@ -34,3 +34,8 @@ npm run migration:up
 ```
 npm run start:dev
 ```
+
+### Run in production mode
+```
+npm run start
+```
