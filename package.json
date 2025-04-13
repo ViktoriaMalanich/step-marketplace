@@ -8,8 +8,9 @@
     "build": "npx tsc",
     "migration:up": "npx typeorm migration:run -d dist/dbconnection.js",
     "migration:down": "npx typeorm migration:revert -d dist/dbconnection.js",
-    "migration:create": "npx typeorm migration:create -n",
-    "start:dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\""   
+    "migration:create": "npx typeorm migration:create",
+    "start:dev": "concurrently \"npx tsc -w\" \"npx nodemon dist/index.js\"",
+    "start": "node dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -26,7 +27,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "mysql2": "^3.14.0",
-    "typeorm": "^0.3.21"
+    "typeorm": "^0.3.22"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",
