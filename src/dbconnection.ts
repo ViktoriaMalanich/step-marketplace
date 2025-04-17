@@ -1,9 +1,14 @@
 import "dotenv/config";
 import { DataSource } from "typeorm";
+import { Category } from "./entities/Category";
+import { User } from "./entities/User";
 
 export const DBconnection = new DataSource({
     type: "mysql",
-    entities: [],
+    entities: [
+        Category,
+        User
+    ],
     logging: true,
     synchronize: false,
     host: process.env.DB_HOST,

@@ -16,6 +16,7 @@ export class CreateCategoryTable1743021680660 implements MigrationInterface {
                 {
                     name: "id",
                     type: "int",
+                    isGenerated: true,
                     generationStrategy: "increment",
                     isNullable: false,
                     unsigned: true,
@@ -56,7 +57,7 @@ export class CreateCategoryTable1743021680660 implements MigrationInterface {
                 {
                     name: "parentId",
                     type: "int",
-                    isNullable: false,
+                    isNullable: true,
                     unsigned: true
                 }
             ]
