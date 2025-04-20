@@ -4,8 +4,7 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
-    OneToMany,
-    CreateDateColumn
+    OneToMany
 } from "typeorm";
 
 @Entity({ name: 'category' })
@@ -21,7 +20,6 @@ export class Category {
         nullable: false
     })
     name!: string;
-
 
     @Column({
         name: "description",
@@ -54,14 +52,21 @@ export class Category {
         nullable: true
     })
     updatedAt!: Date;
+
+    @Column({
+        name: "parentId",
+        type: "int",
+        nullable: true
+    })
+    parentId!: number | null;
   
-    @ManyToOne(() => Category, (category) => category.subcategory, { nullable: true })
+    @ManyToOne(() => Category, (category) => category.subcategories, { nullable: true })
     @JoinColumn({
         name: "parentId"
     })
-    parentId!: Category | null;
+    parent!: Category | null;
 
-    @OneToMany(()=> Category, category => category.parentId)
-    subcategory!: Category[];
+    @OneToMany(()=> Category, category => category.parent)
+    subcategories!: Category[];
     
 }
