@@ -4,8 +4,30 @@ import { Category } from "../../entities/Category";
 
 export const findCategoryList = async () => {
     const categoryRepo = DBconnection.getRepository(Category);
-    const categorylist = await categoryRepo.find();
-    return categorylist;
+    const categorylist = await categoryRepo
+        .createQueryBuilder("category")
+        .getMany();
+
+    const categoryMap = new Map<number, any>();
+    const result: any[] = [];
+
+    categorylist.forEach((category) => {
+        category.subcategories = [];
+        categoryMap.set(category.id, category);
+    });
+
+    categorylist.forEach((category) => {
+        if (category.parentId) {
+            const parent = categoryMap.get(category.parentId);
+            if (parent) {
+                parent.subcategories.push(category);
+            }
+        } else {
+            result.push(category);
+        }
+    });
+
+    return result;
 }
 
 export const findOneCategory = async (categoryIdOrName: number | string): Promise<Category> => {
@@ -38,7 +60,7 @@ export const updateCategory = async (categoryId: number, data: Partial<Category>
         .set(data)
         .where("id = :id", { id: categoryId })
         .execute();
-       
+
     const category = await categoryRepo.findOne({ where: { id: categoryId } });
     if (!category) {
         throw new ErrorHendler(500, 'Cann\'t return modified category');
