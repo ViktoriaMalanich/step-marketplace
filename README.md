@@ -39,3 +39,8 @@ npm run start:dev
 ```
 npm run start
 ```
+
+### API documentation (dev, stage environment)
+```
+http://localhost:8080/api-docs/
+```

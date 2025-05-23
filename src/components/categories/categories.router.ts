@@ -6,10 +6,11 @@ import {
     modifyCategory,
     deleteCategory
 } from "./categories.controller";
+import { printLog } from "../../middlewares/log.middleware";
 
 const router = Router();
 
-router.get("/", getCategoryList);
+router.get("/", printLog, getCategoryList);
 router.get("/:idOrName", getOneCategory);
 
 router.post("/", json(), addNewCategory);
