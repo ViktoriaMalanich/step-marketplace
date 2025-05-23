@@ -1,0 +1,86 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "Step-marketplace OpenAPI documentation",
+        "version": "1.0.0",
+        "description": "This OpenAPI documentation describes the backend of the Step-marketplace project, developed as a diploma project. It provides all necessary endpoints for frontend integration."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Development server"
+        }
+    ],
+    "paths": {
+        "/auth": {},
+        "/users": {},
+        "/categories": {
+            "description": "Resourse to work with categories",
+            "get": {
+                "responses": {
+                    "200": {
+                        "description": "Category list is received",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Category"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {}
+    },
+    "components": {
+        "schemas": {
+            "Category": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "number",
+                        "example": "12"
+                    },
+                    "name": {
+                        "type": "srting",
+                        "example": "cosmetics",
+                        "description": "Name of category"
+                    },
+                    "description": {
+                        "type": "srting",
+                        "example": "cosmetics for face",
+                        "description": "Category's description"
+                    },
+                    "img": {
+                        "type": "srting",
+                        "example": "/path/to/img",
+                        "description": "img url"
+                    },
+                    "createdAt": {
+                        "type": "srting",
+                        "example": "2025-04-17T14:32:13.000Z",
+                        "description": "Creation date"
+                    },
+                    "updatedAt": {
+                        "type": "srting",
+                        "example": "2025-04-17T14:32:13.000Z",
+                        "description": "Date of updating"
+                    },
+                    "parentId": {
+                        "type": "number",
+                        "example": "12",
+                        "description": "Referense to parent category"
+                    },
+                    "subcategories": {
+                        "type": "Array",
+                        "description": "Array of subcategories"
+                    }
+                }
+            }
+        }
+    }
+}

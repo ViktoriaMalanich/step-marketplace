@@ -20,6 +20,7 @@ export const getCategoryList = async (req: Request, res: Response, next: NextFun
 
 export const getOneCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
+        console.log("req.params.idOrName", req.params.idOrName);
         const categories = await findOneCategory(req.params.idOrName);
         res.status(200).json(categories);
     }

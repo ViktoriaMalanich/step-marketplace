@@ -1,38 +1,34 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn,
-    ManyToOne,
-    JoinColumn,
-    OneToMany,
-    CreateDateColumn
+    PrimaryGeneratedColumn
 } from "typeorm";
+import { USER_ROLES, userRolesArray } from "../types";
 
-@Entity({ name: 'user' })
+@Entity({ name: "user" })
 export class User {
     @PrimaryGeneratedColumn("increment")
     id!: number;
 
-    //??
     @Column({
-        name: 'firstName',
-        type: 'varchar',
+        name: "firstName",
+        type: "varchar",
         length: 45,
-        nullable: false
+        nullable: true
     })
     firstName!: string;
 
     @Column({
-        name: 'lastName',
-        type: 'varchar',
+        name: "lastName",
+        type: "varchar",
         length: 45,
         nullable: false
     })
     lastName!: string;
 
     @Column({
-        name: 'email',
-        type: 'varchar',
+        name: "email",
+        type: "varchar",
         length: 45,
         unique: true,
         nullable: false
@@ -40,45 +36,28 @@ export class User {
     email!: string;
 
     @Column({
-        name: "birthDate",
-        type: "date",
-        nullable: true
-    })
-    birthDate!: Date;
-
-    @Column({
         type: "enum",
-        enum: ["guest", "user", "admin"],
-        default: "user"
+        enum: userRolesArray,
+        default: "CUSTOMER"
     })
-    role!: "guest" | "user" | "admin";
+    role!: USER_ROLES;
 
     @Column({
-        name: 'password',
-        type: 'varchar',
+        name: "password",
+        type: "varchar",
         select: false,
         nullable: false,
     })
-    password!: string;
+    password?: string;
 
     @Column({
-        name: 'phone',
-        type: 'varchar',
+        name: "phone",
+        type: "varchar",
         length: 14,
         unique: true,
         nullable: false
     })
     phone!: string;
-
-    //??
-    // @Column({
-    //     name: "img",
-    //     type: "varchar",
-    //     length: 255,
-    //     unique: true,
-    //     nullable: true
-    // })
-    // img!: string;
 
     @Column({
         name: "createdAt",

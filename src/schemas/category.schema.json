@@ -1,0 +1,45 @@
+{
+    "Category": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "type": "number",
+                "example": "12"
+            },
+            "name": {
+                "type": "srting",
+                "example": "cosmetics",
+                "description": "Name of category"
+            },
+            "description": {
+                "type": "srting",
+                "example": "cosmetics for face",
+                "description": "Category's description"
+            },
+            "img": {
+                "type": "srting",
+                "example": "/path/to/img",
+                "description": "img url"
+            },
+            "createdAt": {
+                "type": "srting",
+                "example": "2025-04-17T14:32:13.000Z",
+                "description": "Creation date"
+            },
+            "updatedAt": {
+                "type": "srting",
+                "example": "2025-04-17T14:32:13.000Z",
+                "description": "Date of updating"
+            },
+            "parentId": {
+                "type": "number",
+                "example": "12",
+                "description": "Referense to parent category"
+            },
+            "subcategories": {
+                "type": "Array",
+                "description": "Array of subcategories"
+            }
+        }
+    }
+}
