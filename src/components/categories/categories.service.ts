@@ -56,18 +56,11 @@ export const createCategory = async (category: Category): Promise<Category> => {
 
 export const updateCategory = async (categoryId: number, data: Partial<Category>): Promise<Category> => {
     const categoryRepo = DBconnection.getRepository(Category);
-    await categoryRepo
+    const category = await categoryRepo
         .save({
             id: categoryId,
             ...data
         });
-
-    const category = await categoryRepo.findOne({ where: { id: categoryId } });
-
-    if (!category) {
-        throw new ErrorHendler(500, 'Cann\'t return modified category');
-    }
-
     return category;
 }
 

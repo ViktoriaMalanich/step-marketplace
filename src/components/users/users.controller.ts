@@ -15,6 +15,7 @@ import {
 } from "./users.validation";
 import { ZodError } from "zod";
 import { createHash } from "../../helpers/hash.helper";
+import { ErrorHendler } from "../../classes/ErrorHandler";
 
 
 
@@ -43,32 +44,22 @@ export const getUserById = async (req: Request, res: Response, next: NextFunctio
     }
 }
 
+
 export const putUserData = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        console.log("req.body", req.body);
+        const user = await getOneUser(Number(req.params.id));
+        if (!user) {
+            throw new ErrorHendler(404, "User not found");
+        }
+        // console.log("req.body", req.body);
         const validatedData = updateUserValidator.parse(req.body);
-        //  console.log("Валидэйтед дата", validatedData)
+        //  console.log("Валидэйтед дата", validatedData);s
         const userId = req.params.id; //из url
-        console.log("userId, req.params.id", userId, req.params.id);
+        // console.log("userId, req.params.id", userId, req.params.id);
 
         const updatedUser = await updateUser(Number(userId), validatedData);
         res.status(200).json({ ...updatedUser });
     } catch (error) {
-        // if (error instanceof ZodError) {
-        //     const formattedErrors = error.errors.map(err => ({
-        //         field: err.path.join("."),
-        //         message: err.message,
-        //     }));
-
-        //     return res.status(400).json({
-        //         message: "Validation error",
-        //         errors: formattedErrors,
-        //         input: req.body,
-        //     });
-        // }
-
-        // console.error("Error updating user:", error);
-        // return res.status(500).json({ message: "Internal server error" });
         console.log("My error", error);
         next(error);
     }
@@ -90,7 +81,7 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
     try {
         const userData = req.body;
         const parseResult = createUserValidator.parse(userData);
-       
+
         parseResult.password = createHash(parseResult.password);
         //console.log("parseResult", parseResult);
         const user = await createUser(parseResult);

@@ -2,8 +2,8 @@ import { response } from "express";
 import { Category } from "../schemas/categorySchemas";
 
 const categoryPath = {
+    description: "Resourse to work with one category",
     "/categories": {
-        description: "Resourse to work with categories",
         get: {
             tags: ["Categories"],
             responses: {
@@ -51,10 +51,9 @@ const categoryPath = {
                     }
                 },
                 "400": {
-                     description: "Invalid input"
+                    description: "Invalid input"
                 }
             }
-
         },
     },
 
@@ -100,9 +99,73 @@ const categoryPath = {
             }
         },
         put: {
-            
+            tags: ["Categories"],
+            summary: "Update a category by ID",
+            parameters: [
+                {
+                    in: "path",
+                    name: "id",
+                    required: true,
+                    description: "ID of the category to update",
+                    schema: {
+                        type: "integer"
+                    }
+                },
+            ],
+            requestBody: {
+                description: "Updated data for the category",
+                required: true,
+                content: {
+                    "application/json": {
+                        schema: {
+                            $ref: "#/components/schemas/InputCategory"
+                        }
+                    },
+                },
+
+            },
+            responses: {
+                "200": {
+                    description: "Category successfully updated",
+                    content: {
+                        "application/json": {
+                            schema: {
+                                $ref: "#/components/schemas/Category"
+                            }
+                        }
+                    }
+                },
+                "400": {
+                    description: "Invalid input"
+                },
+                "404": {
+                    description: "Category not found"//выдает ошибку 500
+                }
+            }
         },
-        delete: {}
+        delete: {
+            tags: ["Categories"],
+            summary: "Delete a category by ID",
+            parameters: [
+                {
+                    in: "path",
+                    name: "id",
+                    required: true,
+                    description: "ID of the category to delete",
+                    schema: {
+                        type: "integer"
+                    }
+                }
+            ],
+            responses: {
+                "204": {
+                    description: "Category successfully deleted"
+                },
+                "404": {
+                    description: "Category not found"
+                }
+            }
+        }
     }
 }
 
