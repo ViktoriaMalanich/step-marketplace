@@ -7,6 +7,8 @@ export class ErrorHendler extends Error {
         super(message);
         this.statusCode = statusCode;
         this.message = message || "";
+
+        Object.setPrototypeOf(this, ErrorHendler.prototype);
     }
 
 }

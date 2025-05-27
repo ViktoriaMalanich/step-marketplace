@@ -1,5 +1,10 @@
+import authPath from "./paths/authPath";
 import categoryPath from "./paths/categoryPath";
+import userPath from "./paths/userPath";
+import { AuthInput, AuthResponse } from "./schemas/authSchemas";
+
 import { Category, InputCategory } from "./schemas/categorySchemas";
+import { User, InputUser } from "./schemas/userSchemas";
 
 const swaggerUi = {
     openapi: "3.1.0",
@@ -15,12 +20,18 @@ const swaggerUi = {
         }
     ],
     paths: {
-        ...categoryPath
+        ...categoryPath,
+        ...userPath,
+        ...authPath
     },
     components: {
         schemas: {
             InputCategory,
-            Category
+            Category,
+            InputUser,
+            User,
+            AuthInput,
+            AuthResponse
         }
     }
 };
