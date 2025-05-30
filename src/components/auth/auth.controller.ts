@@ -9,10 +9,9 @@ import { userCredentialsValidator } from "./auth.validator";
 export const createAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const validCredentials = userCredentialsValidator.parse(req.body);
-        
+
         const { email, password } = validCredentials;
         const user = await getUserByEmail(email);
-        console.log("!!! My user", user);
 
         if (!user) {
             throw new ErrorHendler(400, "Invalid login or password");
@@ -23,17 +22,33 @@ export const createAuth = async (req: Request, res: Response, next: NextFunction
         if (!isPasswordVerified) {
             throw new ErrorHendler(400, "Invalid login or password");
         }
-        
+
         delete user.password;
 
-        const token = signToken<Partial<User>>(user);
+        const accessToken = signToken<Partial<User>>(user, true);
+        const refreshToken = signToken<Partial<User>>(user);
 
         res.status(201).json({
             user,
-            token
+            accessToken,
+            refreshToken
         });
 
     } catch (error) {
         next(error);
     }
+}
+
+export const recreateToken = async (req: Request, res: Response, next: NextFunction) => {
+
+    const user = req.user as Partial<User>;
+
+    const refreshToken = signToken<Partial<User>>(user);
+    const accessToken = signToken<Partial<User>>(user, true);
+
+    res.status(201).json({
+        user,
+        refreshToken,
+        accessToken
+    });
 }

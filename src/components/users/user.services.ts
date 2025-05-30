@@ -25,7 +25,7 @@ export const getUserByEmail = async (email: string): Promise<Partial<User> | nul
     const userRepo = DBconnection.getRepository(User);
     const user = await userRepo
         .createQueryBuilder('user')
-        .select(["user.id", "user.firstName", "user.lastName", "user.email", "user.password", "user.role"])
+        .select(["user.id", "user.firstName", "user.lastName", "user.email", "user.password", "user.phone", "user.role"])
         .where('user.email = :email', { email })
         .getOne();
     return user;
