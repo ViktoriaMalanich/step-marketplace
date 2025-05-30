@@ -7,15 +7,23 @@ import {
     deleteCategory
 } from "./categories.controller";
 import { printLog } from "../../middlewares/log.middleware";
+import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
+import { newToken } from "../../middlewares/refreshToken.middleware";
 
 const router = Router();
 
-router.get("/", printLog, getCategoryList);
+router.get("/", newToken, getCategoryList);
 router.get("/:idOrName", getOneCategory);
 
-router.post("/", json(), addNewCategory);
+router.post("/",
+    json(),
+    // isRoot,
+    checAdminOrRoot,
+    addNewCategory
+);
+
 router.put("/:id", json(), modifyCategory);
 
-router.delete("/:id", deleteCategory);
+router.delete("/:id", isAuth, isRoot, deleteCategory);
 
 export const CategoryRouter = router;

@@ -9,6 +9,7 @@ import {
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
 export const getCategoryList = async (req: Request, res: Response, next: NextFunction) => {
+    console.log(req.user);
     try {
         const categories = await findCategoryList();
         res.status(200).json(categories);
