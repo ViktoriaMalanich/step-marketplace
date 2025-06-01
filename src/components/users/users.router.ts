@@ -5,7 +5,8 @@ import {
     getUserById,
     putUserData,
     postUserData,
-    postPassword
+    postPassword,
+    confirmAccount
 } from "./users.controller";
 
 const router = Router();
@@ -13,6 +14,8 @@ const router = Router();
 router.get("/", getUserList);
 
 router.get('/:id', getUserById);
+
+router.get('/confirm/:token', confirmAccount);
 
 router.post('/', json(), postUserData);
 

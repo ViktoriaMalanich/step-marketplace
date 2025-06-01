@@ -8,3 +8,6 @@ export interface IUserPayload {
     email: string;
     role: string;
 }
+
+export type LETTER_TYPE = "VERIFY_EMAIL" | "RECOVER_PASSWORD";
+

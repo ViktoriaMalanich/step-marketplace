@@ -28,6 +28,7 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "libphonenumber-js": "^1.12.7",
+    "mailersend": "^2.6.0",
     "mysql2": "^3.14.0",
     "typeorm": "^0.3.22",
     "zod": "^3.24.4"
