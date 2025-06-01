@@ -1,7 +1,7 @@
 import authPath from "./paths/authPath";
 import categoryPath from "./paths/categoryPath";
 import userPath from "./paths/userPath";
-import { AuthInput, AuthResponse } from "./schemas/authSchemas";
+import { AuthInput, AuthRefreshRequest, AuthResponse } from "./schemas/authSchemas";
 
 import { Category, InputCategory } from "./schemas/categorySchemas";
 import { User, InputUser } from "./schemas/userSchemas";
@@ -31,7 +31,8 @@ const swaggerUi = {
             InputUser,
             User,
             AuthInput,
-            AuthResponse
+            AuthResponse,
+            AuthRefreshRequest
         }
     }
 };

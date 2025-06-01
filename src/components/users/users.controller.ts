@@ -16,6 +16,8 @@ import {
 import { ZodError } from "zod";
 import { createHash } from "../../helpers/hash.helper";
 import { ErrorHendler } from "../../classes/ErrorHandler";
+import { sendEmail } from "../../services/send-email.services";
+import { signToken, verifyToken } from "../../helpers/jwt.helper";
 
 
 
@@ -89,19 +91,24 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
             delete user.password;
         }
 
+        const sendEmailResult = await sendEmail(
+            "VERIFY_EMAIL",             
+            {
+                email: user.email,
+                name: user.firstName + ` ` + user.lastName
+            },
+            {
+                token: signToken(user),
+                expairedIn: "24 h"
+            }
+        );
+
+        console.log("sendEmailResult", sendEmailResult);
+
         res.status(201).json(user);
     } catch (error) {
         next(error);
     }
-
-
-    /**
-     * 1) Провалидировать данные
-     * 2)Сохранить данные в таблицу в БД
-     * 3)Если все успешно, вернуть результат клиенту.
-     * 4)В случае ошибки сделать исключение
-     */
-
 }
 
 export const postPassword = async (req: Request, res: Response, next: NextFunction) => {
@@ -113,4 +120,10 @@ export const postPassword = async (req: Request, res: Response, next: NextFuncti
     } catch (error) {
         next(error);
     }
+}
+
+export const confirmAccount = async (req: Request, res: Response, next: NextFunction) => {
+    const userToken = req.params.token;
+    const userData = verifyToken(userToken);
+    res.status(200).json(userData);
 }

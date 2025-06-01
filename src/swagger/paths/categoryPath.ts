@@ -37,7 +37,6 @@ const categoryPath = {
                         }
                     },
                 },
-
             },
             responses: {
                 "201": {

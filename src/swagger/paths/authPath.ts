@@ -43,6 +43,51 @@ const authPath = {
         }
       }
     }
+  },
+  "/auth/refresh":{
+    post: {
+      tags: ["Auth"],
+      summary: "Updating user tokens",
+      description: "Recreating user tokens",
+      requestBody: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: {
+              $ref: "#/components/schemas/AuthRefreshRequest"
+            }
+          }
+        }
+      },
+      responses: {
+        "201": {
+          description: "New tokens successfully created",
+          content: {
+            "application/json": {
+              schema: {
+                $ref: "#/components/schemas/AuthResponse"
+              }
+            }
+          }
+        },
+        "401": {
+          description: "Invalid access token or user data",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  message: {
+                    type: "string",
+                    example: "You are not authentificated, please login"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 };
 
