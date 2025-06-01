@@ -22,7 +22,7 @@ router.post("/",
     addNewCategory
 );
 
-router.put("/:id", json(), modifyCategory);
+router.put("/:id", json(), isAuth, modifyCategory);
 
 router.delete("/:id", isAuth, isRoot, deleteCategory);
 

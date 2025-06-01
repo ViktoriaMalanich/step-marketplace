@@ -25,6 +25,14 @@ const swaggerUi = {
         ...authPath
     },
     components: {
+        securitySchemes: {
+            bearerAuth: {
+                type: "http",
+                scheme: "bearer",
+                bearerFormat: "JWT",
+                description: "Enter token: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+            }
+        },
         schemas: {
             InputCategory,
             Category,

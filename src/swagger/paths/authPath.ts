@@ -44,21 +44,14 @@ const authPath = {
       }
     }
   },
-  "/auth/refresh":{
+  "/auth/refresh": {
     post: {
       tags: ["Auth"],
       summary: "Updating user tokens",
       description: "Recreating user tokens",
-      requestBody: {
-        required: true,
-        content: {
-          "application/json": {
-            schema: {
-              $ref: "#/components/schemas/AuthRefreshRequest"
-            }
-          }
-        }
-      },
+      security: [{
+        "bearerAuth": []
+      }],
       responses: {
         "201": {
           description: "New tokens successfully created",

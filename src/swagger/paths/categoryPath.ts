@@ -100,6 +100,9 @@ const categoryPath = {
         put: {
             tags: ["Categories"],
             summary: "Update a category by ID",
+            security: [{
+                "bearerAuth": []
+            }],
             parameters: [
                 {
                     in: "path",
