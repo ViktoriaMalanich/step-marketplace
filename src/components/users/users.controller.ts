@@ -1,25 +1,21 @@
 import { Request, Response, NextFunction } from "express";
-import { z as validation } from "zod";
 import {
     getOneUser,
     findUserList,
     updateUser,
-    createUser
+    createUser,
+    getUserByEmail
 } from "./user.services";
 import {
     changePassword,
     createUserValidator,
-    updateUserValidator,
-    // validation
-
+    updateUserValidator
 } from "./users.validation";
-import { ZodError } from "zod";
 import { createHash } from "../../helpers/hash.helper";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { sendEmail } from "../../services/send-email.services";
 import { signToken, verifyToken } from "../../helpers/jwt.helper";
-
-
+import { userEmailValidator } from "../auth/auth.validator";
 
 
 export const getUserList = async (req: Request, res: Response, next: NextFunction) => {
@@ -31,7 +27,6 @@ export const getUserList = async (req: Request, res: Response, next: NextFunctio
     } catch (error) {
         next(error);
     }
-
 }
 
 export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
@@ -65,7 +60,6 @@ export const putUserData = async (req: Request, res: Response, next: NextFunctio
         console.log("My error", error);
         next(error);
     }
-
 };
 
 
@@ -91,19 +85,19 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
             delete user.password;
         }
 
-        const sendEmailResult = await sendEmail(
-            "VERIFY_EMAIL",             
-            {
-                email: user.email,
-                name: user.firstName + ` ` + user.lastName
-            },
-            {
-                token: signToken(user),
-                expairedIn: "24 h"
-            }
-        );
+        // const sendEmailResult = await sendEmail(
+        //     "VERIFY_EMAIL",
+        //     {
+        //         email: user.email,
+        //         name: user.firstName + ` ` + user.lastName
+        //     },
+        //     {
+        //         token: signToken(user),
+        //         expairedIn: "24 h"
+        //     }
+        // );
 
-        console.log("sendEmailResult", sendEmailResult);
+        // console.log("sendEmailResult", sendEmailResult);
 
         res.status(201).json(user);
     } catch (error) {
@@ -113,17 +107,81 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
 
 export const postPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userPassword = req.body;
-        const parsePassword = changePassword.parse(userPassword);
 
-        res.status(201).json({ msg: "password changed" });
+        const token = req.body.token;
+
+        //console.log("token", token);
+
+        if (!token) {
+            throw new ErrorHendler(400, "Missing token");
+        }
+
+
+        const payload = verifyToken(token) as { email: string };
+
+        if (!payload) {
+            throw new ErrorHendler(401, "Invalid or expired token");
+        }
+
+        //console.log("payload!!!!!!!!!!!!!!!!", payload);
+
+        const user = await getUserByEmail(payload.email);
+
+        // const user = await getUserByEmail(req.body.email);
+        if (!user) {
+            throw new ErrorHendler(404, "User not found");
+        }
+        //const userPassword = req.body.password;
+        const parsePassword = changePassword.parse({password: req.body.password});
+
+        //parsePassword.password = createHash(parsePassword.password);
+
+        const userId = user.id;
+
+        // console.log("userId, req.params.id", userId, req.params.id);
+
+        const updatedUser = await updateUser(Number(userId), parsePassword);
+
+        res.status(201).json({ ...updatedUser, msg: "password changed" });//нужен ли спред
     } catch (error) {
         next(error);
     }
 }
 
 export const confirmAccount = async (req: Request, res: Response, next: NextFunction) => {
-    const userToken = req.params.token;
-    const userData = verifyToken(userToken);
-    res.status(200).json(userData);
+    try {
+        const userToken = req.params.token;
+        const userData = verifyToken(userToken);
+        res.status(200).json(userData);
+    } catch (error) {
+        next(error);
+    }
+}
+
+export const requestResetPassword = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const email = req.body.email;
+        const validEmail = userEmailValidator.parse({ email });
+        const user = await getUserByEmail(validEmail.email);
+
+        if (!user) {
+            throw new ErrorHendler(400, "User not found "); //обсудить
+        }
+
+        await sendEmail(
+            "RECOVER_PASSWORD",
+            {
+                email: validEmail.email,
+                name: user.firstName + ` ` + user.lastName
+            },
+            {
+                token: signToken(user),
+                expairedIn: "15 min"
+            }
+        )
+
+        res.status(200).json({ message: "Email was send" });
+    } catch (error) {
+        next(error);
+    }
 }

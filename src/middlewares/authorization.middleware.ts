@@ -1,11 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { setUserPayload } from "./auth.middleware";
 import { ErrorHendler } from "../classes/ErrorHandler";
-import { IUserPayload, USER_ROLES } from "../types";
+import { IUserPayload, RequestWithUser, USER_ROLES } from "../types";
+import { User } from "../entities/User";
 
 export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 
-    if (!req.user) {
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
+    if (!user) {
         throw new ErrorHendler(401, "You are not authentificated");
     }
 
@@ -14,7 +16,7 @@ export const isAuth = (req: Request, res: Response, next: NextFunction) => {
 
 export const isRoot = (req: Request, res: Response, next: NextFunction) => {
 
-    const user = req.user as IUserPayload;
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     if (user.role !== "ROOT") {
         throw new ErrorHendler(403, "You do not have required permitions");
@@ -25,7 +27,7 @@ export const isRoot = (req: Request, res: Response, next: NextFunction) => {
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
-    const user = req.user as IUserPayload;
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     if (user.role !== "ADMIN") {
         throw new ErrorHendler(403, "You do not have required permitions");
@@ -36,7 +38,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
 
 export const isCustomer = (req: Request, res: Response, next: NextFunction) => {
 
-    const user = req.user as IUserPayload;
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     if (user.role !== "CUSTOMER") {
         throw new ErrorHendler(403, "You do not have required permitions");
@@ -47,7 +49,8 @@ export const isCustomer = (req: Request, res: Response, next: NextFunction) => {
 
 //Root or Admin
 export const checAdminOrRoot = (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user as IUserPayload;
+
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     if (user.role !== "ADMIN" || "ROOT") {
         throw new ErrorHendler(403, "You do not have required permitions");
