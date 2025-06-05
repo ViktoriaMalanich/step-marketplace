@@ -5,6 +5,8 @@ import { verifyPassword } from "../../helpers/hash.helper";
 import { signToken } from "../../helpers/jwt.helper";
 import { User } from "../../entities/User";
 import { userCredentialsValidator } from "./auth.validator";
+import { RequestWithUser } from "../../types";
+import { RequestHandler } from "express";
 
 export const createAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -41,7 +43,7 @@ export const createAuth = async (req: Request, res: Response, next: NextFunction
 
 export const recreateToken = async (req: Request, res: Response, next: NextFunction) => {
 
-    const user = req.user as Partial<User>;
+    const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     const refreshToken = signToken<Partial<User>>(user);
     const accessToken = signToken<Partial<User>>(user, true);
@@ -52,3 +54,4 @@ export const recreateToken = async (req: Request, res: Response, next: NextFunct
         accessToken
     });
 }
+
