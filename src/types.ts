@@ -1,4 +1,5 @@
 import { User } from "./entities/User";
+import { Request } from "express";
 
 export type USER_ROLES = "CUSTOMER" | "ADMIN" | "ROOT";
 export const userRolesArray = ["CUSTOMER", "ADMIN", "ROOT"] as const;
@@ -18,6 +19,11 @@ interface ModifyHeaders extends Headers {
 }
 
 export interface RequestWithUser extends Request {
-    user?: Partial<User>;
-    headers: ModifyHeaders
+    user?: Partial<User> | null;
+    //headers: ModifyHeaders
+    headers: Request["headers"] & { authorization?: string };
+}
+
+export interface TokenPayload {
+    [key: string]: string;
 }

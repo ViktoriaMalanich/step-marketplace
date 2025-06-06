@@ -16,6 +16,7 @@ import { ErrorHendler } from "../../classes/ErrorHandler";
 import { sendEmail } from "../../services/send-email.services";
 import { signToken, verifyToken } from "../../helpers/jwt.helper";
 import { userEmailValidator } from "../auth/auth.validator";
+import { RequestWithUser } from "../../types";
 
 
 export const getUserList = async (req: Request, res: Response, next: NextFunction) => {
@@ -108,41 +109,15 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
 export const postPassword = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        const token = req.body.token;
+        const userPayload = (req as RequestWithUser).user;
+      
+        const parsePassword = changePassword.parse(req.body);
 
-        //console.log("token", token);
+        parsePassword.password = createHash(parsePassword.password);
 
-        if (!token) {
-            throw new ErrorHendler(400, "Missing token");
-        }
+        const updatedUser = await updateUser(userPayload?.id as number, parsePassword);
 
-
-        const payload = verifyToken(token) as { email: string };
-
-        if (!payload) {
-            throw new ErrorHendler(401, "Invalid or expired token");
-        }
-
-        //console.log("payload!!!!!!!!!!!!!!!!", payload);
-
-        const user = await getUserByEmail(payload.email);
-
-        // const user = await getUserByEmail(req.body.email);
-        if (!user) {
-            throw new ErrorHendler(404, "User not found");
-        }
-        //const userPassword = req.body.password;
-        const parsePassword = changePassword.parse({password: req.body.password});
-
-        //parsePassword.password = createHash(parsePassword.password);
-
-        const userId = user.id;
-
-        // console.log("userId, req.params.id", userId, req.params.id);
-
-        const updatedUser = await updateUser(Number(userId), parsePassword);
-
-        res.status(201).json({ ...updatedUser, msg: "password changed" });//нужен ли спред
+        res.status(200).json(updatedUser);
     } catch (error) {
         next(error);
     }
@@ -175,7 +150,7 @@ export const requestResetPassword = async (req: Request, res: Response, next: Ne
                 name: user.firstName + ` ` + user.lastName
             },
             {
-                token: signToken(user),
+                token: signToken(user, true),
                 expairedIn: "15 min"
             }
         )

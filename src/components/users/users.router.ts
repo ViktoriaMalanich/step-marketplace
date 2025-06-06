@@ -25,6 +25,6 @@ router.post('/', json(), postUserData);
 
 router.put('/:id', json(), putUserData);
 
-router.post("/change-password", json(), isAuth, postPassword);
+router.post("/change-password", isAuth, json(), postPassword);
 
 export const UserRouter = router;
