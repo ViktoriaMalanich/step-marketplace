@@ -23,7 +23,7 @@ export const getTemplates = (
              <h3>Hello ${options.name}</h3>
                 <p> Have you requested a password rest?
                 <p> If not, just ignore this letter please.
-                <p> To change your password follow the link bellow <a href="${process.env.BASE_URL}/auth/passwordreset/${options.token}">Confirm email</a>
+                <p> To change your password follow the link bellow <a href="${process.env.BASE_URL}/auth/passwordreset/${options.token}">Change password</a>
                 <p> Link expaired in ${options.expairedIn}.
             `;
             break;
