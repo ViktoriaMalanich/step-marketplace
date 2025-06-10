@@ -4,6 +4,7 @@ import { RequestWithUser } from "../types";
 
 import { TokenPayload } from "../types";
 import { ErrorHendler } from "../classes/ErrorHandler";
+import { User } from "../entities/User";
 
 
 
@@ -21,12 +22,15 @@ import { ErrorHendler } from "../classes/ErrorHandler";
 // }
 
 export const setUserPayload = (req: RequestWithUser, res: Response, next: NextFunction) => {
+
     const token = req.headers.authorization?.split(" ")[1];
 
+    let payload: Partial<User> | null = null;
+
     if (token) {
-        const payload = verifyToken(token);
-        req.user = payload;
+        payload = verifyToken(token);
     }
 
+    req.user = payload;
     next();
 };

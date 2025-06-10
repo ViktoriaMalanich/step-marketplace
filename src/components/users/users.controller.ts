@@ -86,17 +86,17 @@ export const postUserData = async (req: Request, res: Response, next: NextFuncti
             delete user.password;
         }
 
-        // const sendEmailResult = await sendEmail(
-        //     "VERIFY_EMAIL",
-        //     {
-        //         email: user.email,
-        //         name: user.firstName + ` ` + user.lastName
-        //     },
-        //     {
-        //         token: signToken(user),
-        //         expairedIn: "24 h"
-        //     }
-        // );
+        const sendEmailResult = await sendEmail(
+            "VERIFY_EMAIL",
+            {
+                email: user.email,
+                name: user.firstName + ` ` + user.lastName
+            },
+            {
+                token: signToken(user),
+                expairedIn: "24 h"
+            }
+        );
 
         // console.log("sendEmailResult", sendEmailResult);
 

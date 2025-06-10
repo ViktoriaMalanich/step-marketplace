@@ -27,3 +27,6 @@ export interface RequestWithUser extends Request {
 export interface TokenPayload {
     [key: string]: string;
 }
+
+export type PRODUCT_STATUS = "IN STOKE" | "ORDER" | "OUT OF STOK";
+export const productStatusArray = ["IN STOKE", "ORDER", "OUT"] as const;

@@ -1,9 +1,11 @@
 import {
     Entity,
     Column,
-    PrimaryGeneratedColumn
+    PrimaryGeneratedColumn,
+    OneToOne
 } from "typeorm";
 import { USER_ROLES, userRolesArray } from "../types";
+import { Market } from "./Market";
 
 @Entity({ name: "user" })
 export class User {
@@ -58,6 +60,9 @@ export class User {
         nullable: false
     })
     phone!: string;
+
+    @OneToOne(() => Market, (market) => market.owner)
+    market?: Market;
 
     @Column({
         name: "createdAt",

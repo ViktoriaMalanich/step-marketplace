@@ -7,7 +7,7 @@ import { RequestHandler } from "express";
 
 export const router = Router();
 
-router.use(setUserPayload as unknown as RequestHandler );
+router.use(setUserPayload as RequestHandler );
 
 router.use("/categories", CategoryRouter);
 

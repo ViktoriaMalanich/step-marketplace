@@ -2,6 +2,7 @@ import { MailerSend, EmailParams, Sender, Recipient } from "mailersend";
 import { LETTER_TYPE } from "../types";
 import { subjects } from "./templates/subjects";
 import { getTemplates } from "./templates/templates";
+import { ErrorHendler } from "../classes/ErrorHandler";
 
 const mailerSend = new MailerSend({
     apiKey: process.env.MAIL_API_KEY || ""
@@ -22,7 +23,7 @@ export const sendEmail = async (
         new Recipient(recipient.email, recipient.name)
     ];
 
-    const html = getTemplates(letterType, {...recipient, ...options});
+    const html = getTemplates(letterType, { ...recipient, ...options });
 
     const emailParams = new EmailParams()
         .setFrom(sentFrom)
@@ -30,7 +31,17 @@ export const sendEmail = async (
         .setSubject(subjects[letterType])
         .setHtml(html);
 
-    await mailerSend.email.send(emailParams);
+    try {
+        const result = await mailerSend.email.send(emailParams);
+        console.log(result);
+
+    } catch (error: any) { //поискать правильный тип для ошибки
+
+        console.log(error);
+        throw new ErrorHendler(error.statusCode, error.body.message);
+
+    }
+
 }
 
 /**
