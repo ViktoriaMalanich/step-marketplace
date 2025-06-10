@@ -2,21 +2,21 @@ import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne,
+    OneToMany,
     JoinColumn,
-    OneToMany
+    OneToOne
 } from "typeorm";
+import { User } from "./User";
 import { Product } from "./Product";
 
-@Entity({ name: 'category' })
-export class Category {
+@Entity({ name: 'market' })
+export class Market {
     @PrimaryGeneratedColumn("increment")
-    id!: number;
+    id!: number; 
 
     @Column({
         name: 'name',
         type: 'varchar',
-        length: 100,
         unique: true,
         nullable: false
     })
@@ -24,19 +24,56 @@ export class Category {
 
     @Column({
         name: "description",
-        type: "mediumtext",
+        type: "text",
         nullable: true
     })
     description!: string;
 
     @Column({
-        name: "img",
+        name: "logo",
         type: "varchar",
-        length: 255,
         unique: true,
         nullable: true
     })
     img!: string;
+
+    @Column({
+        name: "isActive",
+        type: "boolean",
+        nullable: false
+    })
+    isActive!: boolean;
+
+    @Column({
+        name: "phones",
+        type: "json", 
+        unique: true,
+        nullable: false
+    })
+    phones!: string[];
+
+    @Column({
+        name: "emails",
+        type: "json", 
+        unique: true,
+        nullable: false
+    })
+    emails!: string[];
+
+    @Column({
+        name: "address",
+        type: "text",
+        nullable: false
+    })
+    address!: string;
+
+    @Column({
+        name: 'ownerId',
+        type: "int",
+        unsigned: true,
+        nullable: false
+    })
+    ownerId!: number;
 
     @Column({
         name: "createdAt",
@@ -54,21 +91,9 @@ export class Category {
     })
     updatedAt!: Date;
 
-    @Column({
-        name: "parentId",
-        type: "int",
-        nullable: true
-    })
-    parentId!: number | null;
-
-    @ManyToOne(() => Category, (category) => category.subcategories, { nullable: true })
-    @JoinColumn({
-        name: "parentId"
-    })
-    parent!: Category | null;
-
-    @OneToMany(() => Category, category => category.parent)
-    subcategories!: Category[];
+    @OneToOne(() => User)
+    @JoinColumn({ name: "ownerId" }) 
+    owner!: User;
 
     @OneToMany(() => Product, product => product.market)
     products!: Product[];
