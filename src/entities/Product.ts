@@ -61,6 +61,16 @@ export class Product {
     })
     marketId!: number;
 
+    
+    @Column({
+        name: 'categoryId',
+        type: "int",
+        unsigned: true,
+        nullable: false
+    })
+    categoryId!: number;
+
+
 
     @ManyToOne(type => Category, category => category.id, { onDelete: 'CASCADE' })// может не касакад?
     @JoinColumn({ name: 'categoryId' })

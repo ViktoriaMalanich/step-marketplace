@@ -14,6 +14,7 @@ export class CreateProduct1748197563180 implements MigrationInterface {
                         type: "int",
                         isPrimary: true,
                         isGenerated: true,
+                        unsigned: true,
                         generationStrategy: "increment",
                     },
                     {
@@ -35,7 +36,7 @@ export class CreateProduct1748197563180 implements MigrationInterface {
                     {
                         name: "price",
                         type: "int",
-                        unsigned: true,                       
+                        unsigned: true,
                         isNullable: false,
                     },
                     {
@@ -56,6 +57,18 @@ export class CreateProduct1748197563180 implements MigrationInterface {
                         unsigned: true,
                         isNullable: true,
                     },
+                    {
+                        name: "createdAt",
+                        type: "timestamp",
+                        default: "CURRENT_TIMESTAMP",
+                        isNullable: true
+                    },
+                    {
+                        name: "updatedAt",
+                        type: "timestamp",
+                        default: "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
+                        isNullable: true
+                    }
                 ],
             }),
             true
@@ -77,7 +90,7 @@ export class CreateProduct1748197563180 implements MigrationInterface {
                 columnNames: ["categoryId"],
                 referencedTableName: "category",
                 referencedColumnNames: ["id"],
-                onDelete: "CASCADE", 
+                onDelete: "CASCADE",
             })
         );
     }
