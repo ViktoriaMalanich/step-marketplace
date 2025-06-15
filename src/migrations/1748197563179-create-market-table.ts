@@ -72,7 +72,6 @@ export class CreateMarket1748197563179 implements MigrationInterface {
                     default: "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP",
                     isNullable: true
                 }
-
             ]
 
         });
