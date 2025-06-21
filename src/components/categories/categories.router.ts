@@ -4,7 +4,8 @@ import {
     getOneCategory,
     addNewCategory,
     modifyCategory,
-    deleteCategory
+    deleteCategory,
+    modifyCategorySpecs
 } from "./categories.controller";
 import { printLog } from "../../middlewares/log.middleware";
 import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
@@ -18,8 +19,15 @@ router.get("/:idOrName", getOneCategory);
 router.post("/",
     json(),
     // isRoot,
-    checAdminOrRoot,
+   // checAdminOrRoot,
     addNewCategory
+);
+
+router.post("/:id",
+    json(),
+    // isRoot,
+   // checAdminOrRoot,
+    modifyCategorySpecs
 );
 
 router.put("/:id", json(), isAuth, modifyCategory);

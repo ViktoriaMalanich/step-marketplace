@@ -4,9 +4,11 @@ import {
     findOneCategory,
     createCategory,
     updateCategory,
-    removeCategory
+    removeCategory,
+    updateCategorySpecsList
 } from "./categories.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
+import { UpdateCategoryDto } from "./update-category.dto";
 
 export const getCategoryList = async (req: Request, res: Response, next: NextFunction) => {
     
@@ -55,6 +57,26 @@ export const modifyCategory = async (req: Request, res: Response, next: NextFunc
         next(error);
     }
 }
+
+
+
+export const modifyCategorySpecs = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const categoryId = Number(req.params.id);
+        const updateData: UpdateCategoryDto = req.body;
+
+        // Проверка, существует ли категория
+        await findOneCategory(categoryId); // Эта функция выбрасывает 404, если не найдена
+
+        // Обновление категории
+        const modifiedCategory = await updateCategorySpecsList(categoryId, updateData);
+
+        res.status(200).json(modifiedCategory);
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
     try {
