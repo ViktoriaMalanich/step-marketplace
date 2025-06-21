@@ -7,6 +7,7 @@ import {
     OneToMany
 } from "typeorm";
 import { Product } from "./Product";
+import { CategorySpecificationUniqValue } from "./CategorySpecificationUniqValue";
 
 @Entity({ name: 'category' })
 export class Category {
@@ -72,5 +73,9 @@ export class Category {
 
     @OneToMany(() => Product, product => product.market)
     products!: Product[];
+
+    @OneToMany(() => CategorySpecificationUniqValue, csv => csv.category)
+    categorySpecifications!: CategorySpecificationUniqValue[];
+
 
 }

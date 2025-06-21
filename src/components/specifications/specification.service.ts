@@ -1,11 +1,13 @@
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
+import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { Specification } from "../../entities/Specification";
+import { In } from "typeorm";
 
 export const findSpecificationList = async () => {
     const specificationRepo = DBconnection.getRepository(Specification);
     const specificationList = await specificationRepo
-    //.find();
+        //.find();
         .createQueryBuilder("specification")
         .getMany();
 
@@ -21,7 +23,7 @@ export const findOneSpecification = async (specificationIdOrName: number | strin
         .where("specification.id = :specificationIdOrName OR specification.name = :specificationIdOrName", { specificationIdOrName })
         .getOne();
 
-    if (!specification) {      
+    if (!specification) {
         throw new ErrorHendler(404, 'Specification not found');
     }
 
@@ -46,6 +48,37 @@ export const updateSpecification = async (specificationId: number, data: Partial
     return specification;
 }
 
+// export const updateCategorySpecifications = async (categoryId: number, newSpecIds: number[]) => {
+
+//   const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
+
+//   const existingLinks = await specLinkRepo.find({
+//     where: { category: { id: categoryId } },
+//     relations: ['specification'],
+//   });
+
+//   const existingSpecIds = existingLinks.map(link => link.specification.id);
+
+//   const toAdd = newSpecIds.filter(id => !existingSpecIds.includes(id));
+//   const toRemove = existingSpecIds.filter(id => !newSpecIds.includes(id));
+
+//   for (const id of toRemove) {
+//     await specLinkRepo.delete({
+//       category: { id: categoryId },
+//       specification: { id },
+//     });
+//   }
+
+//   for (const id of toAdd) {
+//     await specLinkRepo.save({
+//       category: { id: categoryId },
+//       specification: { id },
+//       uniqValues: [],
+//     });
+//   }
+// };
+
+
 export const removeSpecification = async (specificationId: number) => {
     const specificationRepo = DBconnection.getRepository(Specification);
     await specificationRepo
@@ -55,3 +88,68 @@ export const removeSpecification = async (specificationId: number) => {
         .where("id = :id", { id: specificationId })
         .execute();
 }
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
+
+export const getCategorySpecIds = async (categoryId: number): Promise<number[]> => {
+    const existingLinks = await specLinkRepo.find({
+        where: { category: { id: categoryId } },
+        relations: ['specification'],
+    });
+    return existingLinks.map(link => link.specification.id);
+};
+
+export const addCategorySpecifications = async (categoryId: number, specIds: number[]) => {
+    if (specIds.length === 0) return;
+    const newLinks = specIds.map(id => ({
+        category: { id: categoryId },
+        specification: { id },
+    }));
+    await specLinkRepo.save(newLinks);
+};
+
+export const removeCategorySpecifications = async (categoryId: number, specIds: number[]) => {
+    if (specIds.length === 0) return;
+    await specLinkRepo.delete({
+        category: { id: categoryId },
+        specification: In(specIds),
+    });
+};
+
+export const updateCategorySpecifications = async (categoryId: number, newSpecIds: number[]) => {
+    const existingSpecIds = await getCategorySpecIds(categoryId);
+
+    const toAdd = newSpecIds.filter(id => !existingSpecIds.includes(id));
+    const toRemove = existingSpecIds.filter(id => !newSpecIds.includes(id));
+
+    try {
+        // await removeCategorySpecifications(categoryId, toRemove);
+        // await addCategorySpecifications(categoryId, toAdd);
+
+        await DBconnection.transaction(async (manager) => {
+            if (toRemove.length > 0) {
+                await manager.delete(CategorySpecificationUniqValue, {
+                    category: { id: categoryId },
+                    specification: In(toRemove),
+                });
+            }
+            if (toAdd.length > 0) {
+                const newLinks = toAdd.map(id => manager.create(CategorySpecificationUniqValue, ({
+                    category: { id: categoryId },
+                    specification: { id }
+                    // uniqValues: [],
+                })));
+                await manager.save(CategorySpecificationUniqValue, newLinks);
+            }
+        });
+
+
+    } catch (error) {
+        throw new ErrorHendler(500, 'Error updating category specifications');
+    }
+
+
+
+};

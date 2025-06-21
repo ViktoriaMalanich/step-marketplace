@@ -2,16 +2,15 @@ import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    ManyToOne,
-    JoinColumn,
-    OneToOne
+    OneToMany
 } from "typeorm";
+import { CategorySpecificationUniqValue } from "./CategorySpecificationUniqValue";
 
 
 @Entity({ name: 'specification' })
 export class Specification {
     @PrimaryGeneratedColumn("increment")
-    id!: number; 
+    id!: number;
 
     @Column({
         name: 'name',
@@ -21,12 +20,13 @@ export class Specification {
     })
     name!: string;
 
-    @Column({ name: "measurement",
+    @Column({
+        name: "measurement",
         type: 'varchar',
         nullable: false
     })
     measurement!: string
-    
+
     @Column({
         name: "createdAt",
         type: "timestamp",
@@ -42,4 +42,8 @@ export class Specification {
         nullable: true
     })
     updatedAt!: Date;
+
+    @OneToMany(() => CategorySpecificationUniqValue, csv => csv.specification)
+    categorySpecifications!: CategorySpecificationUniqValue[];
+
 }
