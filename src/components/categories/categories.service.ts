@@ -3,7 +3,11 @@ import { DBconnection } from "../../dbconnection";
 import { Category } from "../../entities/Category";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { updateCategorySpecifications } from "../specifications/specification.service";
-import { UpdateCategoryDto } from "./update-category.dto";
+import { UpdateCategoryDto } from "./category.dto";
+import { Specification } from "../../entities/Specification";
+import { EntityManager } from "typeorm";
+
+
 
 export const findCategoryList = async () => {
     const categoryRepo = DBconnection.getRepository(Category);
@@ -39,6 +43,7 @@ export const findOneCategory = async (categoryIdOrName: number | string): Promis
     const categoryRepo = DBconnection.getRepository(Category);
     const category: Category | null = await categoryRepo
         .createQueryBuilder("category")
+        //добавить джоин с характеристиками
         .where("category.id = :categoryIdOrName OR category.name = :categoryIdOrName", { categoryIdOrName })
         .getOne();
 
@@ -136,3 +141,43 @@ export const removeCategory = async (categoryId: number) => {
         .execute();
 }
 
+
+
+
+/**
+ * Обновляет массив уникальных значений для пары категория-спецификация.
+ * Если пары не существует — создаёт новую запись.
+ */
+export const updateCategorySpecValues = async (
+    manager: EntityManager,
+    categoryId: number,
+    specId: number,
+    value: string
+): Promise<void> => {
+    if (!value) return;
+
+    let record = await manager.findOne(CategorySpecificationUniqValue, {
+        where: {
+            category: { id: categoryId },
+            specification: { id: specId }
+        }
+    });
+
+    if (!record) {
+        // создаём новую пару, если не существует
+        record = manager.create(CategorySpecificationUniqValue, {
+            category: { id: categoryId } as Category,
+            specification: { id: specId } as Specification,
+            uniqValue: [value]
+        });
+        await manager.save(record);
+        return;
+    }
+
+    // если значение уже есть — ничего не делаем
+    if (record.uniqValue?.includes(value)) return;
+
+    // добавляем новое значение
+    record.uniqValue = [...(record.uniqValue || []), value];
+    await manager.save(record);
+};

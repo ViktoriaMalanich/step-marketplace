@@ -9,7 +9,7 @@ import {
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
 export const getProductList = async (req: Request, res: Response, next: NextFunction) => {
-    
+
     try {
         const product = await findProductList();
         res.status(200).json(product);
@@ -32,11 +32,14 @@ export const getOneProduct = async (req: Request, res: Response, next: NextFunct
 
 
 export const addNewProduct = async (req: Request, res: Response, next: NextFunction) => {
+    console.log('Body!!!!!!!!!!!!!!!!!!!!:', req.body);
     try {
-        const newProduct = await createProduct(req.body);
+        const newProduct = await createProduct(req.body);// req.body должен быть CreateProductDto
+        console.log('New product created!!!!!!!!!!:', newProduct);
         res.status(201).json(newProduct);
 
     } catch (error) {
+        console.error('Error creating product!!!!!!!!!!!:', error);
         next(error);
     }
 }
@@ -47,7 +50,7 @@ export const modifyProduct = async (req: Request, res: Response, next: NextFunct
         const product = await findOneProduct(req.params.id);
         if (!product) {
             throw new ErrorHendler(404, "Product not found");
-        }        
+        }
         const modifyedProduct = await updateProduct(Number(req.params.id), { ...product, ...req.body });
         res.status(200).json(modifyedProduct);
 

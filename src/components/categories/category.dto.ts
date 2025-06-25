@@ -3,9 +3,7 @@ export class UpdateCategoryDto {
   description?: string;
   img?: string;
   parentId?: number;
-
   categorySpecifications?: number[];
-
-    addSpecifications?: string;
+  addSpecifications?: string;
   removeSpecifications?: string;
 }
