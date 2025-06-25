@@ -1,6 +1,21 @@
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
+// import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { Product } from "../../entities/Product";
+import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
+// import { Specification } from "../../entities/Specification";
+// import { updateCategorySpecValues } from "../categories/categories.service";
+// import { getCategorySpecIds } from "../specifications/specification.service";
+import { CreateProductDto, UpdateProductDto } from "./product.dto";
+import { createProductSpecValues, updateProductSpecValues } from "./product-spec-values.service";
+
+// const PRODUCT_RELATIONS = [
+//   "category",
+//   "market",
+//   "specificationValues",
+//   "specificationValues.specification"
+// ];
+
 
 export const findProductList = async () => {
     const productRepo = DBconnection.getRepository(Product);
@@ -29,22 +44,113 @@ export const findOneProduct = async (productIdOrName: number | string): Promise<
 }
 
 
-export const createProduct = async (product: Product): Promise<Product> => {
+// export const createProduct = async (product: Product): Promise<Product> => {
 
-    const productRepo = DBconnection.getRepository(Product);
-    const newProduct = await productRepo.save(product);
-    return newProduct;
-}
+//     const productRepo = DBconnection.getRepository(Product);
+//     const newProduct = await productRepo.save(product);
+//     return newProduct;
+// }
 
-export const updateProduct = async (productId: number, data: Partial<Product>): Promise<Product> => {
-    const productRepo = DBconnection.getRepository(Product);
-    const product = await productRepo
-        .save({
-            id: productId,
-            ...data
+
+export const createProduct = async (productData: CreateProductDto): Promise<Product> => {
+    const {
+        name, description, img, price, status,
+        marketId, categoryId, specValues
+    } = productData;
+
+    return await DBconnection.transaction(async manager => {
+        const product = await manager.save(Product, {
+            name, description, img, price, status, marketId, categoryId
         });
-    return product;
-}
+
+        const specValueEntities = await createProductSpecValues(
+            manager,
+            specValues,
+            categoryId,
+            product.id
+        );
+
+        if (specValueEntities.length > 0) {
+            await manager.save(ProductSpecificationValue, specValueEntities);
+        }
+
+        const productWithSpecs = await manager.findOne(Product, {
+            where: { id: product.id },
+            relations: [
+                "category",
+                "market",
+                "specificationValues",
+                "specificationValues.specification"
+            ]
+        });
+
+        return productWithSpecs!;
+    });
+};
+
+
+// export const updateProduct = async (productId: number, data: Partial<Product>): Promise<Product> => {
+//     const productRepo = DBconnection.getRepository(Product);
+//     const product = await productRepo
+//         .save({
+//             id: productId,
+//             ...data
+//         });
+//     return product;
+// }
+
+export const updateProduct = async (
+    productId: number,
+    data: UpdateProductDto
+): Promise<Product> => {
+    return await DBconnection.transaction(async manager => {
+        const productRepo = manager.getRepository(Product);
+
+        const existingProduct = await productRepo.findOneByOrFail({ id: productId });
+
+        console.log("existingProduct!!!", existingProduct);
+        console.log("data!!!", data);
+
+        // Обновляем сам продукт
+        // await productRepo.save({
+        //   ...existingProduct,
+        //   ...data
+        // });
+
+        // Обновляем сам продукт
+        await productRepo.save({
+            id: productId,
+            ...{ price: data.price }
+        });
+
+
+        // Спецификации
+        if (data.specValues || data.specIdsToDelete) {
+            const finalCategoryId =
+                data.categoryId ?? existingProduct.categoryId;
+
+            await updateProductSpecValues(
+                manager,
+                productId,
+                finalCategoryId,
+                data.specValues ?? [],
+                data.specIdsToDelete ?? []
+            );
+        }
+
+        // Возвращаем с подгруженными связями
+        return await manager.findOneOrFail(Product, {
+            where: { id: productId },
+            relations: [
+                "category",
+                "market",
+                "specificationValues",
+                "specificationValues.specification"
+            ]
+        });
+    });
+};
+
 
 export const removeProduct = async (productId: number) => {
     const productRepo = DBconnection.getRepository(Product);

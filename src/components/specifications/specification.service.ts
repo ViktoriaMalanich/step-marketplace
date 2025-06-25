@@ -2,7 +2,10 @@ import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { Specification } from "../../entities/Specification";
-import { In } from "typeorm";
+import { In, EntityManager } from "typeorm";
+import { CreateProductDto } from "../products/product.dto";
+import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
+import { updateCategorySpecValues } from "../categories/categories.service";
 
 export const findSpecificationList = async () => {
     const specificationRepo = DBconnection.getRepository(Specification);
@@ -149,7 +152,9 @@ export const updateCategorySpecifications = async (categoryId: number, newSpecId
     } catch (error) {
         throw new ErrorHendler(500, 'Error updating category specifications');
     }
-
-
-
 };
+
+
+
+
+

@@ -5,6 +5,8 @@ import {
     OneToMany
 } from "typeorm";
 import { CategorySpecificationUniqValue } from "./CategorySpecificationUniqValue";
+import { ProductSpecificationValue } from "./ProductSpecificationValue";
+
 
 
 @Entity({ name: 'specification' })
@@ -45,5 +47,8 @@ export class Specification {
 
     @OneToMany(() => CategorySpecificationUniqValue, csv => csv.specification)
     categorySpecifications!: CategorySpecificationUniqValue[];
+
+    @OneToMany(() => ProductSpecificationValue, psv => psv.specification)
+    productValues!: ProductSpecificationValue[];
 
 }

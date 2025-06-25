@@ -8,7 +8,7 @@ import {
     updateCategorySpecsList
 } from "./categories.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
-import { UpdateCategoryDto } from "./update-category.dto";
+import { UpdateCategoryDto } from "./category.dto";
 
 export const getCategoryList = async (req: Request, res: Response, next: NextFunction) => {
     

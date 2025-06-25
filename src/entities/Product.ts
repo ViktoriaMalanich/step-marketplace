@@ -4,11 +4,14 @@ import {
     PrimaryGeneratedColumn,
     ManyToOne,
     JoinColumn,
-    OneToOne
+    OneToOne,
+    OneToMany
 } from "typeorm";
 import { Market } from "./Market";
 import { Category } from "./Category";
 import { PRODUCT_STATUS, productStatusArray } from "../types";
+import { ProductSpecificationValue } from "./ProductSpecificationValue";
+
 
 
 @Entity({ name: 'product' })
@@ -61,7 +64,7 @@ export class Product {
     })
     marketId!: number;
 
-    
+
     @Column({
         name: 'categoryId',
         type: "int",
@@ -80,4 +83,6 @@ export class Product {
     @JoinColumn({ name: 'marketId' })
     market!: Market;
 
+    @OneToMany(() => ProductSpecificationValue, psv => psv.product)
+    specificationValues!: ProductSpecificationValue[];
 }
