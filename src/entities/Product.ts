@@ -39,7 +39,7 @@ export class Product {
         type: "json",
         nullable: true
     })
-    img!: string[];
+    img!: { public_id: string; secure_url: string }[];
 
     @Column({
         name: 'price',

@@ -4,9 +4,11 @@ import {
     findOneProduct,
     createProduct,
     updateProduct,
-    removeProduct
+    removeProduct,
+    updateProductBasic
 } from "./products.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
+import { deleteTempFiles, uploadImage } from "../../services/cloudinary.service";
 
 export const getProductList = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -32,14 +34,14 @@ export const getOneProduct = async (req: Request, res: Response, next: NextFunct
 
 
 export const addNewProduct = async (req: Request, res: Response, next: NextFunction) => {
-    console.log('Body!!!!!!!!!!!!!!!!!!!!:', req.body);
+    // console.log('Body!!!!!!!!!!!!!!!!!!!!:', req.body);
     try {
         const newProduct = await createProduct(req.body);// req.body должен быть CreateProductDto
         console.log('New product created!!!!!!!!!!:', newProduct);
         res.status(201).json(newProduct);
 
     } catch (error) {
-        console.error('Error creating product!!!!!!!!!!!:', error);
+        // console.error('Error creating product!!!!!!!!!!!:', error);
         next(error);
     }
 }
@@ -69,3 +71,53 @@ export const deleteProduct = async (req: Request, res: Response, next: NextFunct
         next(error);
     }
 }
+
+/**
+ * Контроллер для загрузки массива фото
+ * Ожидает файлы с ключом 'files' (multer положит их в req.files)
+ */
+export const uploadPhotos = async (req: Request, res: Response, next: NextFunction
+): Promise<void> => {
+    try {
+        // Приводим req.files к типу массива файлов multer
+        const files = req.files as Express.Multer.File[];
+
+        // Проверяем, что файлы есть в запросе
+        if (!files || files.length === 0) {
+            res.status(400).json({ message: 'Files not transferred in the request' });
+            return;
+        }
+
+        // Массив для хранения результатов загрузки каждого файла
+        const uploadResults = [];
+
+        // Проходим по каждому файлу и загружаем в Cloudinary
+        for (const file of files) {
+            // uploadImage - твой сервис, загружает файл по пути и возвращает данные
+            const result = await uploadImage(file.path);
+            uploadResults.push(result);
+        }
+        // Добавляем обновление продукта по айди req.params.id, обновить поле img массивом аплоадРезалт
+        // Преобразуем uploadResults в массив объектов с public_id и secure_url
+        const imageObjects = uploadResults.map(result => ({
+            public_id: result.public_id,
+            secure_url: result.secure_url
+        }));
+
+        const productId = Number(req.params.id);
+        
+        //const imageUrls = uploadResults.map(result => result.secure_url);
+        await updateProductBasic(productId, { img: imageObjects });
+
+        //удалить файлы из папки 
+        await deleteTempFiles(files);
+        // успешный ответ с массивом ссылок и ID загруженных фото
+        res.json({
+            message: 'Files uploaded successfully',
+            data: uploadResults,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
