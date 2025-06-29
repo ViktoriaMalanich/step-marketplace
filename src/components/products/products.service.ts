@@ -89,15 +89,22 @@ export const createProduct = async (productData: CreateProductDto): Promise<Prod
 };
 
 
-// export const updateProduct = async (productId: number, data: Partial<Product>): Promise<Product> => {
-//     const productRepo = DBconnection.getRepository(Product);
-//     const product = await productRepo
-//         .save({
-//             id: productId,
-//             ...data
-//         });
-//     return product;
-// }
+export const updateProductBasic = async (productId: number, data: Partial<Product>): Promise<Product> => {
+    const productRepo = DBconnection.getRepository(Product);
+
+    //Спросить!!!  проверка, что продукт с таким id существует:
+    const existingProduct = await productRepo.findOneBy({ id: productId });
+    if (!existingProduct) {
+        throw new Error('Product not found');
+    }
+
+    const product = await productRepo
+        .save({
+            id: productId,
+            ...data
+        });
+    return product;
+}
 
 export const updateProduct = async (
     productId: number,
@@ -169,3 +176,16 @@ export const removeProduct = async (productId: number) => {
 
     await productRepo.delete(productId);
 }
+
+export const updateProductImages = async (
+    productId: number, 
+    imageObjects: { public_id: string; secure_url: string }[]) => {
+    const productRepo = DBconnection.getRepository(Product);
+    const updateResult = await productRepo.update(productId, { img: imageObjects });
+
+    if (updateResult.affected === 0) {
+        throw new Error('Product not found');
+    }
+};
+
+

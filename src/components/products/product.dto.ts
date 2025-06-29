@@ -3,7 +3,7 @@ import { PRODUCT_STATUS } from "../../types";
 export interface CreateProductDto {
   name: string;
   description?: string;
-  img?: string[]; // изображения — массив строк (ссылок)
+  img?: { public_id: string; secure_url: string }[];
   price: number;
   status?: PRODUCT_STATUS;
   marketId: number;
@@ -19,7 +19,7 @@ export interface CreateProductDto {
 export interface UpdateProductDto {
   name?: string;
   description?: string;
-  img?: string[];
+  img?: { public_id: string; secure_url: string }[];
   price?: number;
   status?: PRODUCT_STATUS;
   marketId?: number;
