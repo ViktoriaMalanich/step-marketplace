@@ -1,5 +1,5 @@
+import { ErrorHendler } from "../classes/ErrorHandler";
 import cloudinary from "../config/cloudinary";
-import fs from 'fs/promises';
 
 // Тип результата загрузки, который будет возвращать функция
 interface UploadResult {
@@ -37,13 +37,15 @@ export const uploadImage = async (filePath: string): Promise<UploadResult> => {
     }
 };
 
-
-export const deleteTempFiles = async (files: Express.Multer.File[]) => {
+export const deletePhotoes = async (photoesId: string[]) => {
     try {
-        await Promise.all(files.map(file => fs.unlink(file.path)));
-    } catch (error) {
-        console.error('Error deleting temporary files:', error);
-        // throw error;//спросить
+        await cloudinary.api.delete_resources(photoesId, { invalidate: true });
+    } catch (error: any) {
+       // console.log("error!!!!!!!!!!", error);
+        throw new ErrorHendler(error.error.http_code, error.error.message);
     }
-};
+}
+
+
+
 

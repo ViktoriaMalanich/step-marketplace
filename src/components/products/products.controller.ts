@@ -5,10 +5,13 @@ import {
     createProduct,
     updateProduct,
     removeProduct,
-    updateProductBasic
+    updateProductPhotoes,
+    deleteProductPhoto
 } from "./products.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
-import { deleteTempFiles, uploadImage } from "../../services/cloudinary.service";
+import { uploadImage } from "../../services/cloudinary.service";
+import { deleteTempFiles } from "../../services/file.service";
+import { imagesValidator } from "./product.validator";
 
 export const getProductList = async (req: Request, res: Response, next: NextFunction) => {
 
@@ -105,19 +108,47 @@ export const uploadPhotos = async (req: Request, res: Response, next: NextFuncti
         }));
 
         const productId = Number(req.params.id);
-        
+
         //const imageUrls = uploadResults.map(result => result.secure_url);
-        await updateProductBasic(productId, { img: imageObjects });
+        const newProduct = await updateProductPhotoes(productId, imageObjects);
 
         //удалить файлы из папки 
         await deleteTempFiles(files);
         // успешный ответ с массивом ссылок и ID загруженных фото
-        res.json({
-            message: 'Files uploaded successfully',
-            data: uploadResults,
-        });
+        res.status(200).json(newProduct);
     }
     catch (error) {
         next(error);
     }
 };
+
+export const deletePhotos = async (req: Request, res: Response, next: NextFunction
+): Promise<void> => {
+    try {
+        //const productId = parseInt(req.params.id, 10);
+        const productId = Number(req.params.productId);
+
+        console.log("productId", productId);
+        //const photoesIds = req.query.photoesIds;
+        const { images } = req.query;
+        const validatedImages = imagesValidator.parse(images);
+        console.log(validatedImages);
+
+        const imagesArray = validatedImages.split(",");
+
+        console.log("imagesArray", imagesArray);
+
+        console.log("images", images);
+
+        const updatedProduct = await deleteProductPhoto(productId, imagesArray);
+
+        res.status(200).json(updatedProduct);
+       
+    } catch (error) {
+        console.log("error", error)
+        next(error);
+
+    }
+}
+
+

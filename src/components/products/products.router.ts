@@ -5,7 +5,8 @@ import {
     addNewProduct,
     modifyProduct,
     deleteProduct,
-    uploadPhotos
+    uploadPhotos,
+    deletePhotos
 } from "./products.controller";
 import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
 import { newToken } from "../../middlewares/refreshToken.middleware";
@@ -38,5 +39,8 @@ router.delete("/:id",
 
 router.post('/:id/images', upload.array('files', 10), uploadPhotos);
 ///products/:productId/images
+
+router.delete('/:productId/images', deletePhotos);
+
 
 export const ProductRouter = router;

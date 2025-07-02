@@ -8,6 +8,7 @@ import { ProductSpecificationValue } from "../../entities/ProductSpecificationVa
 // import { getCategorySpecIds } from "../specifications/specification.service";
 import { CreateProductDto, UpdateProductDto } from "./product.dto";
 import { createProductSpecValues, updateProductSpecValues } from "./product-spec-values.service";
+import { deletePhotoes } from "../../services/cloudinary.service";
 
 // const PRODUCT_RELATIONS = [
 //   "category",
@@ -89,19 +90,57 @@ export const createProduct = async (productData: CreateProductDto): Promise<Prod
 };
 
 
-export const updateProductBasic = async (productId: number, data: Partial<Product>): Promise<Product> => {
+export const updateProductPhotoes = async (productId: number, images: any[]): Promise<Product> => {
     const productRepo = DBconnection.getRepository(Product);
 
     //Спросить!!!  проверка, что продукт с таким id существует:
     const existingProduct = await productRepo.findOneBy({ id: productId });
     if (!existingProduct) {
-        throw new Error('Product not found');
+        throw new ErrorHendler(404, 'Product not found');
     }
+
+    const imgArray = [
+        ...existingProduct.img, ...images
+    ];
 
     const product = await productRepo
         .save({
-            id: productId,
-            ...data
+            ...existingProduct,
+            img: imgArray
+        });
+    return product;
+}
+
+export const deleteProductPhoto = async (productId: number, photoesIds: string[]) => {
+    /**
+     * Принимает айди продукта из урла
+     * Принимаем массив айди фотографий, которіе надо удалить ?из квери параметров(обязательній параметр)
+     * По айди продукта достаем продукт (если существует)
+     * Тянемся к полю фотографий
+     * По айди фотографий находим те, которые надо удалить из бд
+     * По ним же удаляем фото из облака
+     * сохраняем обновленный продукт
+     * возвращаем модифицированный продукт//делит вернет - редкий случай
+     */
+
+    const productRepo = DBconnection.getRepository(Product);
+    const existingProduct = await productRepo.findOneBy({ id: productId });
+    if (!existingProduct) {
+        throw new ErrorHendler(404, 'Product not found');
+    }
+
+    const productImg = [...existingProduct.img];
+
+    const imagesToDelete = productImg.filter(item => photoesIds.includes(item.public_id));
+
+    await deletePhotoes(imagesToDelete.map(item => item.public_id));
+
+    const newArrayImages = productImg.filter(item => !photoesIds.includes(item.public_id));
+
+    const product = await productRepo
+        .save({
+            ...existingProduct,
+            img: newArrayImages
         });
     return product;
 }
@@ -178,7 +217,7 @@ export const removeProduct = async (productId: number) => {
 }
 
 export const updateProductImages = async (
-    productId: number, 
+    productId: number,
     imageObjects: { public_id: string; secure_url: string }[]) => {
     const productRepo = DBconnection.getRepository(Product);
     const updateResult = await productRepo.update(productId, { img: imageObjects });
