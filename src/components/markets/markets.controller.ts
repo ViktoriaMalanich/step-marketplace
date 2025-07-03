@@ -4,7 +4,8 @@ import {
     findOneMarket,
     createMarket,
     updateMarket,
-    removeMarket
+    removeMarket,
+    findOwnerMarket
 } from "./market.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
@@ -23,6 +24,17 @@ export const getOneMarket = async (req: Request, res: Response, next: NextFuncti
     try {
         console.log("req.params.idOrName", req.params.idOrName);
         const market = await findOneMarket(req.params.idOrName);
+        res.status(200).json(market);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+export const getOwnerMarket = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log("req.params.ownerId", req.params.ownerId);
+        const market = await findOwnerMarket(req.params.ownerId);
         res.status(200).json(market);
     }
     catch (error) {

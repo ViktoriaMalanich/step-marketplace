@@ -4,7 +4,8 @@ import {
     getOneMarket,
     addNewMarket,
     modifyMarket,
-    deleteMarket
+    deleteMarket,
+    getOwnerMarket
 } from "./markets.controller";
 import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
 import { newToken } from "../../middlewares/refreshToken.middleware";
@@ -16,6 +17,10 @@ router.get("/",
     getMarketList);
 
 router.get("/:idOrName", getOneMarket);
+
+router.get("/owner/:ownerId", getOwnerMarket);
+
+
 
 router.post("/",
     json(),

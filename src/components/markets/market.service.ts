@@ -19,6 +19,7 @@ export const findOneMarket = async (marketIdOrName: number | string): Promise<Ma
     const market: Market | null = await marketRepo
         .createQueryBuilder("market")
         .where("market.id = :marketIdOrName OR market.name = :marketIdOrName", { marketIdOrName })
+        //добавить получения по айди владельца
         .getOne();
 
     if (!market) {
@@ -28,6 +29,22 @@ export const findOneMarket = async (marketIdOrName: number | string): Promise<Ma
     return market;
 }
 
+
+export const findOwnerMarket = async (ownerId: number | string): Promise<Market> => {
+
+    console.log("ownerId", ownerId);
+    const marketRepo = DBconnection.getRepository(Market);
+    const market: Market | null = await marketRepo
+        .createQueryBuilder("market")
+        .where("market.ownerId = :ownerId", { ownerId })
+        .getOne();
+
+    if (!market) {
+        throw new ErrorHendler(404, 'Market not found');
+    }
+
+    return market;
+}
 
 export const createMarket = async (market: Market): Promise<Market> => {
 
