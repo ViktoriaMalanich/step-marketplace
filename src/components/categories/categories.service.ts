@@ -3,7 +3,7 @@ import { DBconnection } from "../../dbconnection";
 import { Category } from "../../entities/Category";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { updateCategorySpecifications } from "../specifications/specification.service";
-import { UpdateCategoryDto } from "./category.dto";
+import { CategorySpecificationDto, SpecificationDto, UpdateCategoryDto } from "./category.dto";
 import { Specification } from "../../entities/Specification";
 import { EntityManager } from "typeorm";
 
@@ -37,23 +37,41 @@ export const findCategoryList = async () => {
     return result;
 }
 
-export const findOneCategory = async (categoryIdOrName: number | string): Promise<Category> => {
-
-    console.log("categoryIdOrName", categoryIdOrName);
+export const findOneCategory = async (categoryIdOrName: number | string): Promise<CategorySpecificationDto> => {
     const categoryRepo = DBconnection.getRepository(Category);
-    const category: Category | null = await categoryRepo
+
+    const category = await categoryRepo
         .createQueryBuilder("category")
-        //добавить джоин с характеристиками
-        .where("category.id = :categoryIdOrName OR category.name = :categoryIdOrName", { categoryIdOrName })
+        .leftJoinAndSelect("category.categorySpecifications", "csv")
+        .leftJoinAndSelect("csv.specification", "spec")
+        .where("category.id = :val OR category.name = :val", { val: categoryIdOrName })
         .getOne();
 
     if (!category) {
-        console.log("!categry");
-        throw new ErrorHendler(404, 'Category not found');
+        throw new ErrorHendler(404, "Category not found");
     }
 
-    return category;
-}
+    console.log("category", category);
+    const transformedSpecs: SpecificationDto[] = category.categorySpecifications.map(csv => ({
+        id: csv.specification.id,
+        name: csv.specification.name,
+        measurement: csv.specification.measurement,
+        uniqValue: csv.uniqValue
+    }));
+
+    const result = {
+        id: category.id,
+        name: category.name,
+        description: category.description,
+        img: category.img,
+        parentId: category.parent?.id ?? null,
+        categorySpecifications: transformedSpecs
+    };
+
+    console.log("result", result);
+
+    return result;
+};
 
 export const createCategory = async (category: Category): Promise<Category> => {
 

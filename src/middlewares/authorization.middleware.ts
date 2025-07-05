@@ -54,7 +54,7 @@ export const checAdminOrRoot = (req: Request, res: Response, next: NextFunction)
 
     const user = (req  as RequestWithUser).user as Partial<User>;
 
-    if (user.role !== "ADMIN" || "ROOT") {
+    if (user.role !== "ADMIN" && user.role !== "ROOT") {
         throw new ErrorHendler(403, "You do not have required permitions");
     }
 

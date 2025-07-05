@@ -13,7 +13,7 @@ import { newToken } from "../../middlewares/refreshToken.middleware";
 
 const router = Router();
 
-router.get("/", newToken, getCategoryList);
+router.get("/", getCategoryList);
 router.get("/:idOrName", getOneCategory);
 
 router.post("/",
