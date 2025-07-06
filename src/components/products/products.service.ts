@@ -61,7 +61,13 @@ export const createProduct = async (productData: CreateProductDto): Promise<Prod
 
     return await DBconnection.transaction(async manager => {
         const product = await manager.save(Product, {
-            name, description, img, price, status, marketId, categoryId
+            name, 
+            description, 
+            img: [], 
+            price, 
+            status, 
+            marketId, 
+            categoryId           
         });
 
         const specValueEntities = await createProductSpecValues(
