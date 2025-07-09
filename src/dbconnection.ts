@@ -7,6 +7,8 @@ import { Product } from "./entities/Product";
 import { Specification } from "./entities/Specification";
 import { CategorySpecificationUniqValue } from "./entities/CategorySpecificationUniqValue";
 import { ProductSpecificationValue } from "./entities/ProductSpecificationValue";
+import { Payment } from "./entities/Payment";
+import { PaymentMethod } from "./entities/PaymentMethod";
 
 export const DBconnection = new DataSource({
     type: "mysql",
@@ -17,7 +19,9 @@ export const DBconnection = new DataSource({
         Product,
         Specification,
         CategorySpecificationUniqValue,
-        ProductSpecificationValue
+        ProductSpecificationValue,
+        Payment,
+        PaymentMethod
     ],
     logging: true,
     synchronize: false,

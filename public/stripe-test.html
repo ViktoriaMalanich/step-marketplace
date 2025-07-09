@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Stripe Test</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+    <h2>Test Card Input</h2>
+    <form id="payment-form">
+        <div id="card-element"></div>
+        <button type="submit">Save Card</button>
+    </form>
+
+    <script>
+
+        const params = new URLSearchParams(window.location.search);
+        const value = params.get('userId');
+        console.log(value);
+
+
+
+        const stripe = Stripe('pk_test_51RhUhaQPvhGs38k8yjxNvQgKrEwoppERmwgEPsnPbiaocMuPpZDyssKvd8Btdz5CUd3UmFXQWINe1qqXxMgs32qq00UlqiBuhI'); // замени на свой ключ
+        const elements = stripe.elements();
+        const card = elements.create('card');
+        card.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const { paymentMethod, error } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: card
+            });
+
+            if (error) {
+                alert(error.message);
+            } else {
+                console.log('Payment method created:', paymentMethod);
+
+                if (!value) {
+                    console.log("Query param userId cannot be empty");
+                    return;
+                }
+
+                fetch(`/payment/${value}/addcard`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ paymentMethodId: paymentMethod.id })
+                })
+                    .then(res => res.json())
+                    .then(data => {
+                        alert('Card saved!');
+                    })
+                    .catch(err => {
+                        console.error('Server error:', err);
+                        alert('Error saving card');
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>

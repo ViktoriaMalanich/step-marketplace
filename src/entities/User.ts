@@ -2,10 +2,13 @@ import {
     Entity,
     Column,
     PrimaryGeneratedColumn,
-    OneToOne
+    OneToOne,
+    OneToMany
 } from "typeorm";
 import { USER_ROLES, userRolesArray } from "../types";
 import { Market } from "./Market";
+import { Payment } from "./Payment";
+import { PaymentMethod } from "./PaymentMethod";
 
 @Entity({ name: "user" })
 export class User {
@@ -63,6 +66,13 @@ export class User {
 
     @OneToOne(() => Market, (market) => market.owner)
     market?: Market;
+
+    @OneToOne(() => Payment, (payment) => payment.userId)
+    payment!: Payment;
+
+    @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user)
+    paymentMethods!: PaymentMethod[];
+
 
     @Column({
         name: "createdAt",
