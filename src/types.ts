@@ -30,3 +30,15 @@ export interface TokenPayload {
 
 export type PRODUCT_STATUS = "IN STOKE" | "ORDER" | "OUT OF STOK";
 export const productStatusArray = ["IN STOKE", "ORDER", "OUT"] as const;
+
+export type STRIPE_METHODS_TYPES = "card";
+
+export interface StripeCardDetailsDto {
+    type: STRIPE_METHODS_TYPES; // card
+    card: {
+        number: string;
+        exp_month: number;
+        exp_year: number;
+        cvc: string;
+    }
+}

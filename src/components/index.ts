@@ -7,6 +7,7 @@ import { RequestHandler } from "express";
 import { SpecificationRouter } from "./specifications/specifications.router";
 import { ProductRouter } from "./products/products.router"; 
 import { MarketRouter } from "./markets/markets.router";
+import { PaymentRouter } from "./payment/payment.router";
 
 export const router = Router();
 
@@ -23,3 +24,5 @@ router.use("/auth", AuthRouter);
 router.use("/markets", MarketRouter);
 
 router.use("/products", ProductRouter);
+
+router.use("/payment", PaymentRouter);

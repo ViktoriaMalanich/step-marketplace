@@ -44,3 +44,5 @@ npm run start
 ```
 http://localhost:8080/api-docs/
 ```
+# Test Usage 
+http://localhost:8080/stripe-test.html?userId=1
