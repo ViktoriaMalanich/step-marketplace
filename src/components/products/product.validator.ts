@@ -19,7 +19,7 @@ export const productListQueryValidation = validation.object({
     validation
       .number({ message: "CategoryId must be a number" })
       .min(1, { message: "Number must be positive" })
-  ),
+  ).optional(),
 
   marketId: validation.preprocess(
     val => Number(val),

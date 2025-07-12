@@ -62,22 +62,23 @@ export const findProductList = async (params: any) => {
         .having('COUNT(DISTINCT s.id) = :count', { count: criterias.length });
 
 
-    // if (marketId) {
-    //     subQuery.andWhere("product.marketId = :marketId", { marketId });
-    // }
 
     const productRepo = DBconnection.getRepository(Product);
 
     const query = productRepo
-        .createQueryBuilder('p')
-        // .select('p')
-        // .from('product', 'p')
-        .where('p.categoryId = :categoryId', { categoryId })
+        .createQueryBuilder('p');
+
+    if (categoryId) {
+        query.where('p.categoryId = :categoryId', { categoryId })
+    }
+
+    query
         .andWhere(new Brackets(qb => {
             qb.where(':criteriasLength = 0', { criteriasLength: criterias.length })
                 .orWhere(`p.id IN (${subQuery.getQuery()})`);
         }))
         .setParameters(subQuery.getParameters());
+
 
     if (marketId) {
         query.andWhere("p.marketId = :marketId", { marketId });
