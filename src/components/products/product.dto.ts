@@ -1,4 +1,5 @@
 import { PRODUCT_STATUS } from "../../types";
+import { z } from "zod";
 
 export interface CreateProductDto {
   name: string;
@@ -32,3 +33,17 @@ export interface UpdateProductDto {
   }[];
   specIdsToDelete?: number[]; //что явно удалить
 }
+
+
+
+ export interface ProductListDto{
+  page?: number;
+  limit?: number;
+  orderBy?: string;
+  order?: "ASC" | "DESC";
+  categoryId?: number;
+  marketId?: number;  
+  specifications?: number[];
+  specValues?: string[];
+ }
+

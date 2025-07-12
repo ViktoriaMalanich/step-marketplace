@@ -11,18 +11,27 @@ import {
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { uploadImage } from "../../services/cloudinary.service";
 import { deleteTempFiles } from "../../services/file.service";
-import { imagesValidator } from "./product.validator";
+import {
+    imagesValidator,
+
+    productListQueryValidation
+} from "./product.validator";
+import { ProductListDto } from "./product.dto";
+
 
 export const getProductList = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-        const product = await findProductList();
+        const validatedQueryParams = productListQueryValidation.parse(req.query);
+        console.log("validatedQueryParams", validatedQueryParams);
+        const product = await findProductList(validatedQueryParams);
         res.status(200).json(product);
     }
     catch (error) {
         next(error);
     }
 }
+
 
 export const getOneProduct = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -143,7 +152,7 @@ export const deletePhotos = async (req: Request, res: Response, next: NextFuncti
         const updatedProduct = await deleteProductPhoto(productId, imagesArray);
 
         res.status(200).json(updatedProduct);
-       
+
     } catch (error) {
         console.log("error", error)
         next(error);
