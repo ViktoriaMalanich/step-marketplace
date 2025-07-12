@@ -6,26 +6,97 @@ import { ProductSpecificationValue } from "../../entities/ProductSpecificationVa
 // import { Specification } from "../../entities/Specification";
 // import { updateCategorySpecValues } from "../categories/categories.service";
 // import { getCategorySpecIds } from "../specifications/specification.service";
-import { CreateProductDto, UpdateProductDto } from "./product.dto";
+import { CreateProductDto, ProductListDto, UpdateProductDto } from "./product.dto";
 import { createProductSpecValues, updateProductSpecValues } from "./product-spec-values.service";
 import { deletePhotoes } from "../../services/cloudinary.service";
-
-// const PRODUCT_RELATIONS = [
-//   "category",
-//   "market",
-//   "specificationValues",
-//   "specificationValues.specification"
-// ];
+import { Brackets } from "typeorm/query-builder/Brackets";
 
 
-export const findProductList = async () => {
+//параметры приходятв ф-цию, обязат. или нет
+//валидация в контроллере
+export const findProductList = async (params: any) => {
+    const {
+        page = 1,
+        limit = 10,
+        orderBy = "id",
+        order = "ASC",
+        categoryId,
+        marketId,
+        specifications = [],
+        specValues = [],
+    } = params;
+
+    const criterias: any[] = [];
+
+    specifications.forEach((item: any, index: number) => {
+        criterias.push([item, specValues[index]]);
+    });
+
+    console.log("criterias!!!", criterias);
+
+    const subQuery = DBconnection
+        .createQueryBuilder()
+        .select('sv.productId')
+        .from('product_specifications_values', 'sv')
+        .innerJoin('specification', 's', 'sv.specId = s.id');
+
+    if (criterias.length > 0) {
+
+        const conditions = criterias.map(
+            (item, index) => `(s.id = :spec${index} AND sv.value = :val${index})`
+        ).join(" OR ");
+
+        const params = criterias.reduce((acc, [specId, value], index) => {
+            acc[`spec${index}`] = specId;
+            acc[`val${index}`] = value;
+            return acc;
+        }, {} as Record<string, any>);
+
+        console.log("params", params);
+
+        subQuery.andWhere(`(${conditions})`, params);
+    }
+
+    subQuery
+        .groupBy('sv.productId')
+        .having('COUNT(DISTINCT s.id) = :count', { count: criterias.length });
+
+
+    // if (marketId) {
+    //     subQuery.andWhere("product.marketId = :marketId", { marketId });
+    // }
+
     const productRepo = DBconnection.getRepository(Product);
-    const productList = await productRepo
-        .find();
-    // .createQueryBuilder("Product")
-    // .getMany();
 
-    return productList;
+    const query = productRepo
+        .createQueryBuilder('p')
+        // .select('p')
+        // .from('product', 'p')
+        .where('p.categoryId = :categoryId', { categoryId })
+        .andWhere(new Brackets(qb => {
+            qb.where(':criteriasLength = 0', { criteriasLength: criterias.length })
+                .orWhere(`p.id IN (${subQuery.getQuery()})`);
+        }))
+        .setParameters(subQuery.getParameters());
+
+    if (marketId) {
+        query.andWhere("p.marketId = :marketId", { marketId });
+    }
+
+    query
+        .limit(limit)
+        .offset(limit * (page - 1));
+
+    if (orderBy && order) {
+
+        query.orderBy(orderBy, order);
+    }
+
+
+    console.log(query.getQuery());
+
+    const [productList, rowNumber] = await query.getManyAndCount();
+    return { productList, rowNumber };
 }
 
 export const findOneProduct = async (productIdOrName: number | string): Promise<Product> => {
@@ -34,6 +105,8 @@ export const findOneProduct = async (productIdOrName: number | string): Promise<
     const productRepo = DBconnection.getRepository(Product);
     const product: Product | null = await productRepo
         .createQueryBuilder("product")
+        .leftJoinAndSelect("product.specificationValues", "specificationValues")
+        .leftJoinAndSelect("specificationValues.specification", "specification")
         .where("product.id = :productIdOrName OR product.name = :productIdOrName", { productIdOrName })
         .getOne();
 
@@ -61,13 +134,13 @@ export const createProduct = async (productData: CreateProductDto): Promise<Prod
 
     return await DBconnection.transaction(async manager => {
         const product = await manager.save(Product, {
-            name, 
-            description, 
-            img: [], 
-            price, 
-            status, 
-            marketId, 
-            categoryId           
+            name,
+            description,
+            img: [],
+            price,
+            status,
+            marketId,
+            categoryId
         });
 
         const specValueEntities = await createProductSpecValues(
