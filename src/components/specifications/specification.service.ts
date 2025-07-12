@@ -7,15 +7,27 @@ import { CreateProductDto } from "../products/product.dto";
 import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
 import { updateCategorySpecValues } from "../categories/categories.service";
 
-export const findSpecificationList = async () => {
-    const specificationRepo = DBconnection.getRepository(Specification);
-    const specificationList = await specificationRepo
-        //.find();
-        .createQueryBuilder("specification")
+//export const findSpecificationList = async () => {
+    // const specificationRepo = DBconnection.getRepository(Specification);
+    // const specificationList = await specificationRepo
+    //     //.find();
+    //     .createQueryBuilder("specification")
+    //     .getMany();
+
+    // return specificationList;}
+
+    export const findSpecificationList = async (categoryId: number) => {
+    const specs = await DBconnection
+        .getRepository(Specification)
+        .createQueryBuilder("spec")
+        .innerJoin(CategorySpecificationUniqValue, "csuv", "csuv.specId = spec.id")
+        .where("csuv.categoryId = :categoryId", { categoryId })
         .getMany();
 
-    return specificationList;
-}
+    return specs;
+};
+
+
 
 export const findOneSpecification = async (specificationIdOrName: number | string): Promise<Specification> => {
 

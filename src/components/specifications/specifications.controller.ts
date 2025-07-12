@@ -8,16 +8,32 @@ import {
 } from "./specification.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
+// export const getSpecificationList = async (req: Request, res: Response, next: NextFunction) => {
+
+//     try {
+//         const specification = await findSpecificationList();
+//         res.status(200).json(specification);
+//     }
+//     catch (error) {
+//         next(error);
+//     }
+// }
+
 export const getSpecificationList = async (req: Request, res: Response, next: NextFunction) => {
-    
     try {
-        const specification = await findSpecificationList();
+        const categoryId = Number(req.query.categoryId);
+
+        if (!categoryId || isNaN(categoryId)) {
+            return res.status(400).json({ message: "Invalid or missing categoryId" });
+        }
+
+        const specification = await findSpecificationList(categoryId);
         res.status(200).json(specification);
-    }
-    catch (error) {
+    } catch (error) {
         next(error);
     }
-}
+};
+
 
 export const getOneSpecification = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -47,7 +63,7 @@ export const modifySpecification = async (req: Request, res: Response, next: Nex
         const specification = await findOneSpecification(req.params.id);
         if (!specification) {
             throw new ErrorHendler(404, "Specification not found");
-        }        
+        }
         const modifyedSpecification = await updateSpecification(Number(req.params.id), { ...specification, ...req.body });
         res.status(200).json(modifyedSpecification);
 

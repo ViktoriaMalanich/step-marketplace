@@ -12,8 +12,8 @@ import { deletePhotoes } from "../../services/cloudinary.service";
 import { Brackets } from "typeorm/query-builder/Brackets";
 
 
-//параметры приходятв ф-цию, обязат. или нет
-//валидация в контроллере
+//параметры приходятв ф-цию
+
 export const findProductList = async (params: any) => {
     const {
         page = 1,
