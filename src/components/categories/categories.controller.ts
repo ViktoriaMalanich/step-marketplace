@@ -5,13 +5,14 @@ import {
     createCategory,
     updateCategory,
     removeCategory,
-    updateCategorySpecsList
+    updateCategorySpecsList,
+    updateCategoryPhoto
 } from "./categories.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { UpdateCategoryDto } from "./category.dto";
 
 export const getCategoryList = async (req: Request, res: Response, next: NextFunction) => {
-    
+
     try {
         const categories = await findCategoryList();
         res.status(200).json(categories);
@@ -49,7 +50,7 @@ export const modifyCategory = async (req: Request, res: Response, next: NextFunc
         const category = await findOneCategory(req.params.id);
         if (!category) {
             throw new ErrorHendler(404, "Category not found");
-        }        
+        }
         const modifyedCategory = await updateCategory(Number(req.params.id), { ...category, ...req.body });
         res.status(200).json(modifyedCategory);
 
@@ -87,3 +88,31 @@ export const deleteCategory = async (req: Request, res: Response, next: NextFunc
         next(error);
     }
 }
+
+
+export const uploadCategoryPhoto = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const categoryId = Number(req.params.categoryId);
+
+
+        if (isNaN(categoryId)) {
+            throw new ErrorHendler(400, 'Invalid category ID');
+        }
+
+        if (!req.file) {
+            res.status(400).json({ message: 'File is required' });
+        }
+
+        const file = req.file;
+        if (!file) {
+            res.status(400).json({ message: 'File is required' });
+            return;
+        }
+
+        const updatedCategory = await updateCategoryPhoto(categoryId, file);
+
+        res.status(200).json(updatedCategory);
+    } catch (error) {
+        next(error);
+    }
+};

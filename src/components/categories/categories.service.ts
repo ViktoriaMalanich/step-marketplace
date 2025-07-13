@@ -2,10 +2,11 @@ import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
 import { Category } from "../../entities/Category";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
-import { updateCategorySpecifications } from "../specifications/specification.service";
+import { updateCategorySpecifications } from "../specifications/specifications.service";
 import { CategorySpecificationDto, SpecificationDto, UpdateCategoryDto } from "./category.dto";
 import { Specification } from "../../entities/Specification";
 import { EntityManager } from "typeorm";
+import { uploadImage } from "../../services/cloudinary.service";
 
 
 
@@ -198,4 +199,28 @@ export const updateCategorySpecValues = async (
     // добавляем новое значение
     record.uniqValue = [...(record.uniqValue || []), value];
     await manager.save(record);
+};
+
+
+export const updateCategoryPhoto = async (
+  categoryId: number,
+  file: Express.Multer.File
+): Promise<Category> => {
+  const categoryRepo = DBconnection.getRepository(Category);
+
+  const existingCategory = await categoryRepo.findOneBy({ id: categoryId });
+  if (!existingCategory) {
+    throw new ErrorHendler(404, 'Category is not found');
+  }
+
+  // Загружаем файл в Cloudinary
+  const uploadedImage = await uploadImage(file.path); // file.path — путь от multer
+
+  // Сохраняем новый URL, не трогая старое фото
+  const updatedCategory = await categoryRepo.save({
+    ...existingCategory,
+    img: uploadedImage.secure_url,
+  });
+
+  return updatedCategory;
 };

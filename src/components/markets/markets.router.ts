@@ -5,10 +5,12 @@ import {
     addNewMarket,
     modifyMarket,
     deleteMarket,
-    getOwnerMarket
+    getOwnerMarket,
+    uploadMarketPhoto
 } from "./markets.controller";
 import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
 import { newToken } from "../../middlewares/refreshToken.middleware";
+import upload from "../../middlewares/upload.middleware";
 
 const router = Router();
 
@@ -21,7 +23,6 @@ router.get("/:idOrName", getOneMarket);
 router.get("/owner/:ownerId", getOwnerMarket);
 
 
-
 router.post("/",
     json(),
     // isRoot,
@@ -29,13 +30,22 @@ router.post("/",
     addNewMarket
 );
 
+router.post(
+    '/:marketId/image', 
+    upload.single('file'), 
+    uploadMarketPhoto);
+
+
 router.put("/:id", json(),
     //isAuth, 
-    modifyMarket);
+    modifyMarket
+);
+
 
 router.delete("/:id",
     //isAuth, 
     // isRoot, 
-    deleteMarket);
+    deleteMarket
+);
 
 export const MarketRouter = router;
