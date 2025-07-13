@@ -296,15 +296,15 @@ export const removeProduct = async (productId: number) => {
     await productRepo.delete(productId);
 }
 
-export const updateProductImages = async (
-    productId: number,
-    imageObjects: { public_id: string; secure_url: string }[]) => {
-    const productRepo = DBconnection.getRepository(Product);
-    const updateResult = await productRepo.update(productId, { img: imageObjects });
+// export const updateProductImages = async (
+//     productId: number,
+//     imageObjects: { public_id: string; secure_url: string }[]) => {
+//     const productRepo = DBconnection.getRepository(Product);
+//     const updateResult = await productRepo.update(productId, { img: imageObjects });
 
-    if (updateResult.affected === 0) {
-        throw new Error('Product not found');
-    }
-};
+//     if (updateResult.affected === 0) {
+//         throw new Error('Product not found');
+//     }
+// };
 
 

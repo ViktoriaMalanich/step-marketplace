@@ -5,11 +5,13 @@ import {
     addNewCategory,
     modifyCategory,
     deleteCategory,
-    modifyCategorySpecs
+    modifyCategorySpecs,
+    uploadCategoryPhoto
 } from "./categories.controller";
 import { printLog } from "../../middlewares/log.middleware";
 import { checAdminOrRoot, isAuth, isRoot } from "../../middlewares/authorization.middleware";
 import { newToken } from "../../middlewares/refreshToken.middleware";
+import upload from "../../middlewares/upload.middleware";
 
 const router = Router();
 
@@ -29,6 +31,11 @@ router.post("/:id",
    // checAdminOrRoot,
     modifyCategorySpecs
 );
+
+router.post(
+    '/:categoryId/image', 
+    upload.single('file'), 
+    uploadCategoryPhoto);
 
 router.put("/:id", json(), isAuth, modifyCategory);
 

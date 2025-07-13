@@ -8,23 +8,33 @@ import { ProductSpecificationValue } from "../../entities/ProductSpecificationVa
 import { updateCategorySpecValues } from "../categories/categories.service";
 
 //export const findSpecificationList = async () => {
-    // const specificationRepo = DBconnection.getRepository(Specification);
-    // const specificationList = await specificationRepo
-    //     //.find();
-    //     .createQueryBuilder("specification")
-    //     .getMany();
+// const specificationRepo = DBconnection.getRepository(Specification);
+// const specificationList = await specificationRepo
+//     //.find();
+//     .createQueryBuilder("specification")
+//     .getMany();
 
-    // return specificationList;}
+// return specificationList;}
 
-    export const findSpecificationList = async (categoryId: number) => {
+export const findSpecificationList = async (categoryId?: number) => {
     const specs = await DBconnection
         .getRepository(Specification)
         .createQueryBuilder("spec")
-        .innerJoin(CategorySpecificationUniqValue, "csuv", "csuv.specId = spec.id")
-        .where("csuv.categoryId = :categoryId", { categoryId })
-        .getMany();
+        .select([
+            "spec.id AS id",
+            "spec.name AS name",
+            "spec.measurement AS measurement"
+        ]);
 
-    return specs;
+    if (categoryId) {
+        specs
+            .innerJoin(CategorySpecificationUniqValue, "csuv", "csuv.specId = spec.id")
+            .where("csuv.categoryId = :categoryId", { categoryId })
+    }
+
+    const result = await specs.getRawMany();
+
+    return result;
 };
 
 

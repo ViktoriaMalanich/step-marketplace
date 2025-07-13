@@ -1,7 +1,7 @@
 import { EntityManager, In } from "typeorm";
 import { CreateProductDto, UpdateProductDto } from "./product.dto";
 import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
-import { getCategorySpecIds } from "../specifications/specification.service";
+import { getCategorySpecIds } from "../specifications/specifications.service";
 import { Specification } from "../../entities/Specification";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { updateCategorySpecValues } from "../categories/categories.service";

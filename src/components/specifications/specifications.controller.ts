@@ -5,20 +5,30 @@ import {
     createSpecification,
     updateSpecification,
     removeSpecification
-} from "./specification.service";
+} from "./specifications.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
 
 export const getSpecificationList = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const categoryId = Number(req.query.categoryId);
+        const { categoryId } = req.query;
 
-        if (!categoryId || isNaN(categoryId)) {
-            res.status(400).json({ message: "Invalid or missing categoryId" });
+        if (categoryId !== undefined) {
+
+            const parsed = Number(categoryId);
+
+            if (isNaN(parsed)) {
+                res.status(400).json({ message: "Invalid or missing categoryId" });
+                return;
+            }
+            const specification = await findSpecificationList(parsed);
+            res.status(200).json(specification);
+            return;
         }
 
-        const specification = await findSpecificationList(categoryId);
+        const specification = await findSpecificationList();
         res.status(200).json(specification);
+
     } catch (error) {
         next(error);
     }
