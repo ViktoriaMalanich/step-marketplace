@@ -94,18 +94,15 @@ export const uploadPhotos = async (req: Request, res: Response, next: NextFuncti
         // Приводим req.files к типу массива файлов multer
         const files = req.files as Express.Multer.File[];
 
-        // Проверяем, что файлы есть в запросе
         if (!files || files.length === 0) {
             res.status(400).json({ message: 'Files not transferred in the request' });
             return;
         }
 
-        // Массив для хранения результатов загрузки каждого файла
         const uploadResults = [];
 
         // Проходим по каждому файлу и загружаем в Cloudinary
         for (const file of files) {
-            // uploadImage - твой сервис, загружает файл по пути и возвращает данные
             const result = await uploadImage(file.path);
             uploadResults.push(result);
         }
@@ -118,7 +115,6 @@ export const uploadPhotos = async (req: Request, res: Response, next: NextFuncti
 
         const productId = Number(req.params.id);
 
-        //const imageUrls = uploadResults.map(result => result.secure_url);
         const newProduct = await updateProductPhotoes(productId, imageObjects);
 
         //удалить файлы из папки 
@@ -138,16 +134,15 @@ export const deletePhotos = async (req: Request, res: Response, next: NextFuncti
         const productId = Number(req.params.productId);
 
         console.log("productId", productId);
-        //const photoesIds = req.query.photoesIds;
         const { images } = req.query;
         const validatedImages = imagesValidator.parse(images);
         console.log(validatedImages);
 
         const imagesArray = validatedImages.split(",");
 
-        console.log("imagesArray", imagesArray);
+        //console.log("imagesArray", imagesArray);
 
-        console.log("images", images);
+        //console.log("images", images);
 
         const updatedProduct = await deleteProductPhoto(productId, imagesArray);
 

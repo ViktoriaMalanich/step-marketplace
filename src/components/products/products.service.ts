@@ -17,7 +17,7 @@ import { Brackets } from "typeorm/query-builder/Brackets";
 export const findProductList = async (params: any) => {
     const {
         page = 1,
-        limit = 10,
+        limit = 50,
         orderBy = "id",
         order = "ASC",
         categoryId,

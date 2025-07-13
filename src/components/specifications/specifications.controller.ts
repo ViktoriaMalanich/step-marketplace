@@ -8,23 +8,13 @@ import {
 } from "./specification.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 
-// export const getSpecificationList = async (req: Request, res: Response, next: NextFunction) => {
-
-//     try {
-//         const specification = await findSpecificationList();
-//         res.status(200).json(specification);
-//     }
-//     catch (error) {
-//         next(error);
-//     }
-// }
 
 export const getSpecificationList = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const categoryId = Number(req.query.categoryId);
 
         if (!categoryId || isNaN(categoryId)) {
-            return res.status(400).json({ message: "Invalid or missing categoryId" });
+            res.status(400).json({ message: "Invalid or missing categoryId" });
         }
 
         const specification = await findSpecificationList(categoryId);
