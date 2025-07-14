@@ -116,9 +116,12 @@ export const removeSpecification = async (specificationId: number) => {
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
+
 
 export const getCategorySpecIds = async (categoryId: number): Promise<number[]> => {
+
+    const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
+
     const existingLinks = await specLinkRepo.find({
         where: { category: { id: categoryId } },
         relations: ['specification'],
@@ -127,6 +130,8 @@ export const getCategorySpecIds = async (categoryId: number): Promise<number[]> 
 };
 
 export const addCategorySpecifications = async (categoryId: number, specIds: number[]) => {
+
+    const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
     if (specIds.length === 0) return;
     const newLinks = specIds.map(id => ({
         category: { id: categoryId },
@@ -136,6 +141,9 @@ export const addCategorySpecifications = async (categoryId: number, specIds: num
 };
 
 export const removeCategorySpecifications = async (categoryId: number, specIds: number[]) => {
+
+    const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
+
     if (specIds.length === 0) return;
     await specLinkRepo.delete({
         category: { id: categoryId },
@@ -174,6 +182,25 @@ export const updateCategorySpecifications = async (categoryId: number, newSpecId
     } catch (error) {
         throw new ErrorHendler(500, 'Error updating category specifications');
     }
+};
+
+//дописать контроллер
+export const findSpecUniqValueByCategory = async (categoryId: number) => {
+    const specs = await DBconnection
+        .getRepository(Specification)
+        .createQueryBuilder("spec")
+        .innerJoin(CategorySpecificationUniqValue, "csuv", "csuv.specId = spec.id")
+        .where("csuv.categoryId = :categoryId", { categoryId })
+        .select([
+            "spec.title AS name",
+            "csuv.uniqueValues AS uniqueValues"
+        ])
+        .getRawMany();
+
+    return specs.map(spec => ({
+        name: spec.name,
+        uniqueValues: JSON.parse(spec.uniqueValues) // если строка
+    }));
 };
 
 

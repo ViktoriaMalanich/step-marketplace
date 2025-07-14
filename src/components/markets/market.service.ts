@@ -1,7 +1,7 @@
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
 import { Market } from "../../entities/Market";
-import { uploadImage } from "../../services/cloudinary.service";
+import { deletePhotoes, uploadImage } from "../../services/cloudinary.service";
 
 export const findMarketList = async () => {
     const marketRepo = DBconnection.getRepository(Market);
@@ -84,26 +84,26 @@ export const removeMarket = async (marketId: number) => {
 }
 
 export const updateMarketPhoto = async (
-  marketId: number,
-  file: Express.Multer.File
+    marketId: number,
+    file: Express.Multer.File
 ): Promise<Market> => {
-  const marketRepo = DBconnection.getRepository(Market);
+    const marketRepo = DBconnection.getRepository(Market);
 
-  const existingMarket = await marketRepo.findOneBy({ id: marketId });
-  if (!existingMarket) {
-    throw new ErrorHendler(404, 'Market not found');
-  }
+    const existingMarket = await marketRepo.findOneBy({ id: marketId });
+    if (!existingMarket) {
+        throw new ErrorHendler(404, 'Market not found');
+    }
 
-  // Загружаем файл в Cloudinary
-  const uploadedImage = await uploadImage(file.path); // file.path — путь от multer
+    // Загружаем файл в Cloudinary
+    const uploadedImage = await uploadImage(file.path); // file.path — путь от multer
+    await deletePhotoes([existingMarket.img]);
+    // Сохраняем новый URL, не трогая старое фото
+    const updatedMarket = await marketRepo.save({
+        ...existingMarket,
+        img: uploadedImage.secure_url,
+    });
 
-  // Сохраняем новый URL, не трогая старое фото
-  const updatedMarket = await marketRepo.save({
-    ...existingMarket,
-    img: uploadedImage.secure_url,
-  });
-
-  return updatedMarket;
+    return updatedMarket;
 };
 
 
