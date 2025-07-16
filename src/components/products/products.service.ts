@@ -12,6 +12,18 @@ import { deletePhotoes } from "../../services/cloudinary.service";
 import { Brackets } from "typeorm/query-builder/Brackets";
 
 
+export const findProductsByIdList = async (ids: number[]): Promise<Product[]> => {
+
+    const productRepo = DBconnection.getRepository(Product);
+    const products = await productRepo
+        .createQueryBuilder()
+        .where("id IN (:...ids)", { ids })
+        .getMany();
+
+    return products;
+}
+
+
 //параметры приходятв ф-цию
 
 export const findProductList = async (params: any) => {

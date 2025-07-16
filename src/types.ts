@@ -42,3 +42,9 @@ export interface StripeCardDetailsDto {
         cvc: string;
     }
 }
+
+export type DELIVERY_STATUS = "NONE" | "PROCESSING" | "IN_TRANSIT" | "DELIVERED" | "COMPLETED";
+export const diliveryStatusArray = ["NONE", "PROCESSING", "IN_TRANSIT", "DELIVERED", "COMPLETED"] as const;
+
+export type PAYMENT_STATUS = "NONE" | "UNPAID" | "PAID" | "PENDING" | "FAILED" | "REFUNDED";
+export const paymentStatusArray = ["NONE", "UNPAID", "PAID", "PENDING", "FAILED", "REFUNDED"] as const;
