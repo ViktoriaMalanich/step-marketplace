@@ -52,3 +52,39 @@ export const addCard = async (
         throw new ErrorHendler(500, error.message);
     }
 }
+
+export const createPaymentIntent = async (
+    //'payment method id', 'customer payment stripe id'
+    paymentMethodId: string,
+    stripeId: string,
+    amount: number
+) => {
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount, // сумма в пенсах (£50.00 = 5000)
+            currency: 'gbp',
+            payment_method: paymentMethodId,
+            confirm: true,                   // подтвердить и провести платёж
+            customer: stripeId,
+            description: 'Online purchase',
+            receipt_email: 'vmalanich290806@gmail.com', // <- клиент получит квитанцию
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: 'never'
+            },
+        }
+        );
+
+        console.log(paymentIntent);
+
+        return paymentIntent;
+
+    } catch (error: any) {//спросить
+        console.log(error);
+        throw new ErrorHendler(500, error?.message || 'Stripe payment error');
+    }
+
+}
+//создать урл в роу,тере передать параметрами юзер айди плательщика и сумму
+
+//createPaymentIntent().catch(console.error);
