@@ -9,6 +9,7 @@ import { USER_ROLES, userRolesArray } from "../types";
 import { Market } from "./Market";
 import { Payment } from "./Payment";
 import { PaymentMethod } from "./PaymentMethod";
+import { Order } from "./Order";
 
 @Entity({ name: "user" })
 export class User {
@@ -72,6 +73,9 @@ export class User {
 
     @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user)
     paymentMethods!: PaymentMethod[];
+
+    @OneToMany(() => Order, (order) => order.user)
+    order!: Order[];
 
 
     @Column({
