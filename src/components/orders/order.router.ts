@@ -3,7 +3,7 @@ import { postCart } from "./oreder.controller";
 
 const router: Router = Router();
 
-router.post('/', json(), postCart);
+router.post('/:userId', json(), postCart);
 
 //router.post('/:orderId/buy', json(), postAddPriceToOrder);
 

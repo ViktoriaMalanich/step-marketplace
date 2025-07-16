@@ -4,7 +4,7 @@ import { ErrorHendler } from "../../classes/ErrorHandler";
 
 export const postCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const userId = Number(req.body.userId);
+        const userId = Number(req.params.userId);
         const items = req.body.items;
 
         //сделать валидатор
