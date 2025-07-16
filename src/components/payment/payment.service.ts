@@ -17,13 +17,24 @@ export const createUserPaymentData = async (stripeData: PaymentDto): Promise<Pay
     return stripeCustomerData;
 }
 
-export const findUserPaymentData = async (userId: number): Promise<Payment> => {
+export const findUserPaymentData = async (userId: number): Promise<any> => {
 
     const paymentRepo = DBconnection.getRepository(Payment);
     const payment = await paymentRepo
         .createQueryBuilder('payment')
+        .leftJoinAndSelect(
+            'payment_methods',
+            'payment_methods',
+            'payment.userId = payment_methods.user_id'
+        )
+        .select([
+            'payment.userId AS userId',
+            'payment.stripeId AS stripeId',
+            'payment_methods.id AS pmId',
+            'payment_methods.stripe_payment_method_id AS pmStripeId'
+        ])
         .where('payment.userId = :userId', { userId })
-        .getOne();
+        .getRawOne();
 
     if (!payment) {
         throw new ErrorHendler(400, "Data not found");

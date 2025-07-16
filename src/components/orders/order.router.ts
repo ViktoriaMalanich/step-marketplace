@@ -1,5 +1,5 @@
 import { json, Router } from "express";
-import { postCart, postPayForOrder } from "./oreder.controller";
+import { postCart, postPayForOrder } from "./order.controller";
 
 const router: Router = Router();
 

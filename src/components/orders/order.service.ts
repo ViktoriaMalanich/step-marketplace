@@ -89,3 +89,14 @@ export const createOrder = async (userId: number, items: OrderItemInput[]): Prom
     return fullOrder;
 };
 
+
+export const modifyOrder = async (order: Order): Promise<Order> => {
+
+    const orderRepo = DBconnection.getRepository(Order);
+
+    await orderRepo.save(order);
+
+    const newOrder = await getOrderById(order.id);
+
+    return newOrder;
+}
