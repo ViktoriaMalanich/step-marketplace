@@ -20,7 +20,6 @@ export const findOneMarket = async (marketIdOrName: number | string): Promise<Ma
     const market: Market | null = await marketRepo
         .createQueryBuilder("market")
         .where("market.id = :marketIdOrName OR market.name = :marketIdOrName", { marketIdOrName })
-        //добавить получения по айди владельца
         .getOne();
 
     if (!market) {
