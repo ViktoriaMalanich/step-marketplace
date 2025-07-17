@@ -1,5 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { createOrder, getOrderById, modifyOrder } from "./order.service";
+import {
+    createOrder,
+    getOrderById,
+    modifyOrder,
+    findOrderList,
+    getOrderListByUserId
+} from "./order.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { findUserPaymentData } from "../payment/payment.service";
 import { createPaymentIntent } from "../../services/stripe.service";
@@ -47,7 +53,7 @@ export const postPayForOrder = async (req: Request, res: Response, next: NextFun
 
         const order = await getOrderById(orderId);
 
-        if(order.paymentStatus != "NONE" && order.paymentStatus != "PENDING"){
+        if (order.paymentStatus != "NONE" && order.paymentStatus != "PENDING") {
             throw new ErrorHendler(400, "The order has already been paid")
         }
 
@@ -67,6 +73,50 @@ export const postPayForOrder = async (req: Request, res: Response, next: NextFun
 
     } catch (error) {
         next(error)
+    }
+}
+
+export const getOrderList = async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+        const order = await findOrderList();
+        res.status(200).json(order);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+
+export const getOneOrder = async (req: Request, res: Response, next: NextFunction) => {
+
+    console.log("=== getOneOrder called ===");
+    try {
+        console.log("req.params.id!!!!!!!!", req.params.id);
+        const orderId = Number(req.params.id);
+
+        if (isNaN(orderId)) {
+            res.status(400).json({ message: "Invalid order ID" });
+        }
+        const order = await getOrderById(orderId);
+        res.status(200).json(order);
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
+
+export const getUserOrderList = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        console.log("req.params.userId", req.params.userId);
+        const userId = Number(req.params.userId);
+        console.log("userId", userId);
+        const order = await getOrderListByUserId(userId);
+        res.status(200).json(order);
+    }
+    catch (error) {
+        next(error);
     }
 }
 
