@@ -47,6 +47,8 @@ export const productListQueryValidation = validation.object({
 
   order: validation.enum(["ASC", "DESC"]).default("ASC").optional(),
 
+  search: validation.string().optional(),
+
   specifications: validation.preprocess(
     val => !val ? [] : val.toString().split(",").map(item => Number(item)),
     validation.array(validation.number(), {
