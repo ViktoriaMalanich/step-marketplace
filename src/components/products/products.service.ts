@@ -36,6 +36,7 @@ export const findProductList = async (params: any) => {
         marketId,
         specifications = [],
         specValues = [],
+        search = null,
     } = params;
 
     const criterias: any[] = [];
@@ -94,6 +95,10 @@ export const findProductList = async (params: any) => {
 
     if (marketId) {
         query.andWhere("p.marketId = :marketId", { marketId });
+    }
+
+    if (search) {
+        query.andWhere("p.name LIKE :search OR p.description LIKE :search", { search: `%${search}%` })
     }
 
     query

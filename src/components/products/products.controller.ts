@@ -140,9 +140,6 @@ export const deletePhotos = async (req: Request, res: Response, next: NextFuncti
 
         const imagesArray = validatedImages.split(",");
 
-        //console.log("imagesArray", imagesArray);
-
-        //console.log("images", images);
 
         const updatedProduct = await deleteProductPhoto(productId, imagesArray);
 
@@ -154,5 +151,7 @@ export const deletePhotos = async (req: Request, res: Response, next: NextFuncti
 
     }
 }
+
+
 
 
