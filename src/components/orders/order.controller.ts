@@ -90,14 +90,8 @@ export const getOrderList = async (req: Request, res: Response, next: NextFuncti
 
 export const getOneOrder = async (req: Request, res: Response, next: NextFunction) => {
 
-    console.log("=== getOneOrder called ===");
     try {
-        console.log("req.params.id!!!!!!!!", req.params.id);
         const orderId = Number(req.params.id);
-
-        if (isNaN(orderId)) {
-            res.status(400).json({ message: "Invalid order ID" });
-        }
         const order = await getOrderById(orderId);
         res.status(200).json(order);
     }
@@ -108,10 +102,8 @@ export const getOneOrder = async (req: Request, res: Response, next: NextFunctio
 
 
 export const getUserOrderList = async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        console.log("req.params.userId", req.params.userId);
+    try {        
         const userId = Number(req.params.userId);
-        console.log("userId", userId);
         const order = await getOrderListByUserId(userId);
         res.status(200).json(order);
     }

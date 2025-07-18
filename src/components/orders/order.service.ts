@@ -31,9 +31,7 @@ export const getOrderById = async (orderId: number): Promise<Order> => {
 
 export const getOrderListByUserId = async (userId: number): Promise<Order[]> => {
 
-    console.log("userId", userId);
     const orderRepo = DBconnection.getRepository(Order);
-
     const order = await orderRepo
         .createQueryBuilder("order")
         .leftJoinAndSelect("order.items", "items")
@@ -41,7 +39,6 @@ export const getOrderListByUserId = async (userId: number): Promise<Order[]> => 
         .where("order.userId = :userId", { userId })
         .getMany();
 
-    console.log("order", order);
     if (!order) {
         throw new ErrorHendler(400, "Invalid orderId!!!!");
     }
