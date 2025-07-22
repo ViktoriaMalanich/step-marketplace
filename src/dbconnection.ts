@@ -11,6 +11,7 @@ import { Payment } from "./entities/Payment";
 import { PaymentMethod } from "./entities/PaymentMethod";
 import { Order } from "./entities/Order";
 import { OrderItem } from "./entities/OrderItem";
+import { Wishlist } from "./entities/Wishlist";
 
 export const DBconnection = new DataSource({
     type: "mysql",
@@ -25,7 +26,8 @@ export const DBconnection = new DataSource({
         Payment,
         PaymentMethod,
         Order,
-        OrderItem
+        OrderItem,
+        Wishlist
     ],
     logging: true,
     synchronize: false,
