@@ -11,6 +11,7 @@ import { Market } from "./Market";
 import { Category } from "./Category";
 import { PRODUCT_STATUS, productStatusArray } from "../types";
 import { ProductSpecificationValue } from "./ProductSpecificationValue";
+import { Wishlist } from "./Wishlist";
 
 
 
@@ -85,4 +86,7 @@ export class Product {
 
     @OneToMany(() => ProductSpecificationValue, psv => psv.product)
     specificationValues!: ProductSpecificationValue[];
+
+    @OneToMany(() => Wishlist, wishlist => wishlist.product)
+    wishlists!: Wishlist[];
 }

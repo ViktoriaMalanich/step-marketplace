@@ -10,6 +10,7 @@ import { Market } from "./Market";
 import { Payment } from "./Payment";
 import { PaymentMethod } from "./PaymentMethod";
 import { Order } from "./Order";
+import { Wishlist } from "./Wishlist";
 
 @Entity({ name: "user" })
 export class User {
@@ -76,6 +77,9 @@ export class User {
 
     @OneToMany(() => Order, (order) => order.user)
     order!: Order[];
+
+    @OneToMany(() => Wishlist, wishlist => wishlist.user)
+    wishlists!: Wishlist[];
 
 
     @Column({

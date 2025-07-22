@@ -9,6 +9,7 @@ import { ProductRouter } from "./products/products.router";
 import { MarketRouter } from "./markets/markets.router";
 import { PaymentRouter } from "./payment/payment.router";
 import { OrderRouter } from "./orders/order.router";
+import { WishlistRouter } from "./wishlists/wishlist.router";
 
 export const router = Router();
 
@@ -29,3 +30,5 @@ router.use("/products", ProductRouter);
 router.use("/payment", PaymentRouter);
 
 router.use("/orders", OrderRouter);
+
+router.use("/wishlist", WishlistRouter);
