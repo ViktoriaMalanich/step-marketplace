@@ -55,14 +55,17 @@ export const addProductToWishlist = async (userId: number, productId: number): P
             product: { id: productId }
         })
         .execute();
+    // wishlistRepo
+    // .save({ userId, productId
+    // });
 
     const usersWislist = await findWishlist(userId);
 
     return usersWislist;
 }
 
-//Спросить
-export const removeProductFromWishlist = async (userId: number, productId: number) => {
+
+export const removeProductFromWishlist = async (userId: number, productId: number): Promise<void> => {
     const wishlistRepo = DBconnection.getRepository(Wishlist);
     const wishlist = await wishlistRepo
         .createQueryBuilder()

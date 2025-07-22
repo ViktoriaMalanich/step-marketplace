@@ -5,6 +5,5 @@ export const deleteTempFiles = async (files: Express.Multer.File[]) => {
         await Promise.all(files.map(file => fs.unlink(file.path)));
     } catch (error) {
         console.error('Error deleting temporary files:', error);
-        // throw error;//спросить
     }
 };

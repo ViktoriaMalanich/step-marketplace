@@ -18,7 +18,7 @@ import { Wishlist } from "./Wishlist";
 @Entity({ name: 'product' })
 export class Product {
     @PrimaryGeneratedColumn("increment")
-    id!: number; //спросить
+    id!: number; 
 
     @Column({
         name: 'name',
@@ -65,7 +65,6 @@ export class Product {
     })
     marketId!: number;
 
-
     @Column({
         name: 'categoryId',
         type: "int",
@@ -73,7 +72,6 @@ export class Product {
         nullable: false
     })
     categoryId!: number;
-
 
 
     @ManyToOne(type => Category, category => category.id, { onDelete: 'CASCADE' })// может не касакад?

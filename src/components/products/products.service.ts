@@ -190,7 +190,6 @@ export const createProduct = async (productData: CreateProductDto): Promise<Prod
 export const updateProductPhotoes = async (productId: number, images: any[]): Promise<Product> => {
     const productRepo = DBconnection.getRepository(Product);
 
-    //Спросить!!!  проверка, что продукт с таким id существует:
     const existingProduct = await productRepo.findOneBy({ id: productId });
     if (!existingProduct) {
         throw new ErrorHendler(404, 'Product not found');

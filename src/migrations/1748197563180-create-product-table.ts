@@ -96,10 +96,10 @@ export class CreateProduct1748197563180 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        //спросить
         const table = await queryRunner.getTable(this.tableName);
         if (table) {
-            const foreignKeyMarket = table.foreignKeys.find(fk => fk.columnNames.indexOf("marketId") !== -1);
+            const foreignKeyMarket = table.foreignKeys.find(fk =>
+                fk.columnNames.indexOf("marketId") !== -1);
             if (foreignKeyMarket) {
                 await queryRunner.dropForeignKey(this.tableName, foreignKeyMarket);
             }

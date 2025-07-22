@@ -79,7 +79,7 @@ export const createPaymentIntent = async (
 
         return paymentIntent;
 
-    } catch (error: any) {//спросить
+    } catch (error: any) {
         console.log(error);
         throw new ErrorHendler(500, error?.message || 'Stripe payment error');
     }

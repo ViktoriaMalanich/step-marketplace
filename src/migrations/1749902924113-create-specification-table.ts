@@ -41,7 +41,7 @@ export class CreateSpecificationTable1749902924113 implements MigrationInterface
                     },
                 ],
             }),
-            true //спросить
+            true 
         );
     }
 
