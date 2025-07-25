@@ -81,6 +81,13 @@ export class User {
     @OneToMany(() => Wishlist, wishlist => wishlist.user)
     wishlists!: Wishlist[];
 
+    @Column({
+        name: "address",
+        type: "varchar",
+        length: 255,
+        nullable: true
+    })
+    address!: string;
 
     @Column({
         name: "createdAt",
