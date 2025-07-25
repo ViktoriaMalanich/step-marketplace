@@ -56,8 +56,6 @@ export class AddUniqueAndCascadeToCategorySpecUniqValue1750284488199 implements 
         if (fks.length > 0) {
             await queryRunner.dropForeignKeys(this.tableName, fks);
         }
-
-        // (необязательно) можешь вернуть FK без CASCADE, если нужно
     }
 
 }
