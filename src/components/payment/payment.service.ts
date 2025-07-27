@@ -3,6 +3,8 @@ import { DBconnection } from "../../dbconnection";
 import { Payment } from "../../entities/Payment";
 import { PaymentDto } from "./payment.dto";
 import { PaymentMethod } from "../../entities/PaymentMethod";
+import { User } from "../../entities/User";
+import { stripe } from "../../config/stripe";
 
 
 export const createUserPaymentData = async (stripeData: PaymentDto): Promise<Payment> => {
@@ -75,3 +77,41 @@ export const savePaymentMethod = async (
 
     return saved;
 }
+
+export const removeUserPayment = async (userId: number) => {
+    const paymentRepo = DBconnection.getRepository(Payment);
+    // await paymentRepo
+    //     .createQueryBuilder()
+    //     .delete()
+    //     .from(Payment)
+    //     .where("userId = :userId", { userId })
+    //     .execute();
+
+    const payment = await paymentRepo.findOneBy({ userId });
+
+    if (!payment) {
+        throw new ErrorHendler(404, "Payment not found");
+    }
+
+    await paymentRepo.delete(userId);
+}
+
+export const removeUserPaymentMethods = async (userId: number) => {
+    const paymentMethodsRepo = DBconnection.getRepository(PaymentMethod);
+    await paymentMethodsRepo.delete({ user_id: userId });
+};
+
+export const removeUserPaymentMethod = async (paymentMethodId: number) => {
+    const repo = DBconnection.getRepository(PaymentMethod);
+    const method = await repo.findOneBy({ id: paymentMethodId });
+
+    if (!method) {
+        throw new ErrorHendler(404, "Payment method not found");
+    }
+
+    // Удалить из Stripe (опционально, если нужно):
+    await stripe.paymentMethods.detach(method.stripe_payment_method_id);
+
+    await repo.delete({ id: paymentMethodId });
+};
+

@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { getOneUser } from "../users/user.services";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { addCard, customerDelete, customerRegistration } from "../../services/stripe.service";
-import { createUserPaymentData, findUserPaymentData, savePaymentMethod } from "./payment.service";
+import { createUserPaymentData, findUserPaymentData, removeUserPayment, removeUserPaymentMethods, savePaymentMethod } from "./payment.service";
 import { STRIPE_METHODS_TYPES } from "../../types";
 import { stripe } from "../../config/stripe";
 
@@ -37,7 +37,11 @@ export const deleteStripeCustomer = async (req: Request, res: Response, next: Ne
         const userId = Number(req.params.userId);
         const paymentData = await findUserPaymentData(userId);
 
-        const deletedCustomer = await customerDelete(paymentData.stripeId);
+        await customerDelete(paymentData.stripeId);
+
+        await removeUserPaymentMethods(userId);
+
+        await removeUserPayment(userId);
 
         res.status(204).send();
         //.status(200).json({ deletedCustomer });

@@ -69,7 +69,7 @@ export class User {
     @OneToOne(() => Market, (market) => market.owner)
     market?: Market;
 
-    @OneToOne(() => Payment, (payment) => payment.userId)
+    @OneToOne(() => Payment, (payment) => payment.user)
     payment!: Payment;
 
     @OneToMany(() => PaymentMethod, (paymentMethod) => paymentMethod.user)
