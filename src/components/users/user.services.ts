@@ -13,6 +13,8 @@ export const getOneUser = async (userId: number): Promise<User | null> => {
     const userRepo = DBconnection.getRepository(User);
     const user = await userRepo
         .createQueryBuilder('user')
+        .leftJoinAndSelect('user.payment', 'payment')
+        .leftJoinAndSelect('user.paymentMethods', 'paymentMethod')
         .where('user.id = :userId', { userId })
         .getOne();
     return user;
