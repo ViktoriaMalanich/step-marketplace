@@ -2,7 +2,9 @@ import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
 import { Order } from "../../entities/Order";
 import { OrderItem } from "../../entities/OrderItem";
+import { DELIVERY_STATUS } from "../../types";
 import { findOneProduct, findProductsByIdList } from "../products/products.service";
+import { validateStatusTransition } from "./order.validator";
 
 type OrderItemInput = {
     productId: number;
@@ -40,7 +42,7 @@ export const getOrderListByUserId = async (userId: number): Promise<Order[]> => 
         .getMany();
 
     if (!order) {
-        throw new ErrorHendler(400, "Invalid orderId!!!!");
+        throw new ErrorHendler(400, "Invalid userId!!!!");
     }
 
     return order;
@@ -127,3 +129,24 @@ export const findOrderList = async () => {
 
     return orderList;
 }
+
+export const modifyDeliveryStatus = async (
+    orderId: number,
+    newStatus: DELIVERY_STATUS
+): Promise<Order> => {
+    const orderRepo = DBconnection.getRepository(Order);
+    const order = await getOrderById(orderId);
+
+    if (!order) {
+        throw new ErrorHendler(400, "Invalid orderId!!!!");
+    }
+    
+    validateStatusTransition(order.deliveryStatus, newStatus);
+    order.deliveryStatus = newStatus;
+
+    await orderRepo.save(order);
+
+    return order;
+};
+
+

@@ -4,11 +4,13 @@ import {
     getOrderById,
     modifyOrder,
     findOrderList,
-    getOrderListByUserId
+    getOrderListByUserId,
+    modifyDeliveryStatus
 } from "./order.service";
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { findUserPaymentData } from "../payment/payment.service";
 import { createPaymentIntent } from "../../services/stripe.service";
+import { DELIVERY_STATUS, diliveryStatusArray } from "../../types";
 
 export const postCart = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -102,7 +104,7 @@ export const getOneOrder = async (req: Request, res: Response, next: NextFunctio
 
 
 export const getUserOrderList = async (req: Request, res: Response, next: NextFunction) => {
-    try {        
+    try {
         const userId = Number(req.params.userId);
         const order = await getOrderListByUserId(userId);
         res.status(200).json(order);
@@ -112,3 +114,32 @@ export const getUserOrderList = async (req: Request, res: Response, next: NextFu
     }
 }
 
+
+export const updateDeliveryStatus = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const orderId = Number(req.params.orderId);
+        console.log("orderId", orderId);
+    
+        if (!orderId) {
+            throw new ErrorHendler(400, "Wrong id");
+        }
+
+        const { deliveryStatus }: { deliveryStatus: DELIVERY_STATUS } = req.body;
+
+
+        if (!deliveryStatus) {
+            throw new ErrorHendler(400, "Delivery status is required");
+        }
+
+        if (!diliveryStatusArray.includes(deliveryStatus)) {
+            throw new ErrorHendler(400, "Invalid delivery status. Must be one of: ${diliveryStatusArray.join(', ')")
+        }
+
+        const updatedOrder = await modifyDeliveryStatus(orderId, deliveryStatus);
+
+        res.status(200).json({ updatedOrder });
+
+    } catch (error) {
+        next(error);
+    }
+}
