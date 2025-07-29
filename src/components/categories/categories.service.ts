@@ -97,7 +97,6 @@ export const updateCategorySpecsList = async (
     categoryId: number,
     data: UpdateCategoryDto & { categorySpecifications?: number[] }
 ): Promise<Category> => {
-    // console.log('Входные данные для обновления:', data);
 
     const categoryRepo = DBconnection.getRepository(Category);
 
@@ -159,8 +158,6 @@ export const removeCategory = async (categoryId: number) => {
         .where("id = :id", { id: categoryId })
         .execute();
 }
-
-
 
 
 /**
