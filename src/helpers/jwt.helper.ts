@@ -1,5 +1,4 @@
 import * as jwt from 'jsonwebtoken';
-import { JwtPayload } from 'jsonwebtoken';
 
 import { TokenPayload } from '../types';
 import { User } from '../entities/User';

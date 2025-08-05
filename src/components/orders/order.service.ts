@@ -31,6 +31,7 @@ export const getOrderById = async (orderId: number): Promise<Order> => {
     return order;
 }
 
+//TODO пагинация
 export const getOrderListByUserId = async (userId: number): Promise<Order[]> => {
 
     const orderRepo = DBconnection.getRepository(Order);
@@ -123,7 +124,6 @@ export const modifyOrder = async (order: Order): Promise<Order> => {
 export const findOrderList = async () => {
     const orderRepo = DBconnection.getRepository(Order);
     const orderList = await orderRepo
-        //  .find();
         .createQueryBuilder("Order")
         .getMany();
 
@@ -140,7 +140,7 @@ export const modifyDeliveryStatus = async (
     if (!order) {
         throw new ErrorHendler(400, "Invalid orderId!!!!");
     }
-    
+
     validateStatusTransition(order.deliveryStatus, newStatus);
     order.deliveryStatus = newStatus;
 

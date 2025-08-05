@@ -6,23 +6,15 @@ import { Specification } from "../../entities/Specification";
 import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { updateCategorySpecValues } from "../categories/categories.service";
 
-// НАЙТИ ВОЗМОЖНОСТЬ ПЕРЕПИСАТЬ ЭТУ ФИГНЮ, ЧТОБ СОКРАТИТЬ КОЛ-ВО ЗАПРОСОВ К БД
-/**
- * Обрабатывает массив характеристик товара:
- * - Создаёт новую спецификацию, если она не найдена по названию
- * - Привязывает новую спецификацию к категории
- * - Создаёт значения характеристик товара
- * - Обновляет список уникальных значений для пары категория-спецификация
- */
+//TODO has to be changed
 export const createProductSpecValues = async (
     manager: EntityManager,
     specValues: CreateProductDto["specValues"],
     categoryId: number,
     productId: number
 ): Promise<ProductSpecificationValue[]> => {
-    // Получаем все ID спецификаций, привязанных к данной категории
+    
     const categorySpecIds = await getCategorySpecIds(categoryId);
-
     const result: ProductSpecificationValue[] = [];
 
     for (const sv of specValues || []) {

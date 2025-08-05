@@ -11,7 +11,6 @@ import { RequestHandler } from "express";
 export const createAuth = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const validCredentials = userCredentialsValidator.parse(req.body);
-
         const { email, password } = validCredentials;
         const user = await getUserByEmail(email);
 
