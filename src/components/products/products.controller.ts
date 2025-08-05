@@ -13,7 +13,6 @@ import { uploadImage } from "../../services/cloudinary.service";
 import { deleteTempFiles } from "../../services/file.service";
 import {
     imagesValidator,
-
     productListQueryValidation
 } from "./product.validator";
 import { ProductListDto } from "./product.dto";

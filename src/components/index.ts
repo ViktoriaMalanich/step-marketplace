@@ -10,6 +10,7 @@ import { MarketRouter } from "./markets/markets.router";
 import { PaymentRouter } from "./payment/payment.router";
 import { OrderRouter } from "./orders/order.router";
 import { WishlistRouter } from "./wishlists/wishlist.router";
+import { StatisticsRouter } from "./statistics/statistics.router";
 
 export const router = Router();
 
@@ -32,3 +33,5 @@ router.use("/payment", PaymentRouter);
 router.use("/orders", OrderRouter);
 
 router.use("/wishlist", WishlistRouter);
+
+router.use("/statistics", StatisticsRouter);
