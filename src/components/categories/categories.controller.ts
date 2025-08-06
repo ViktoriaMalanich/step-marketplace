@@ -65,13 +65,8 @@ export const modifyCategorySpecs = async (req: Request, res: Response, next: Nex
     try {
         const categoryId = Number(req.params.id);
         const updateData: UpdateCategoryDto = req.body;
-
-        // Проверка, существует ли категория
-        await findOneCategory(categoryId); // Эта функция выбрасывает 404, если не найдена
-
-        // Обновление категории
+        await findOneCategory(categoryId); 
         const modifiedCategory = await updateCategorySpecsList(categoryId, updateData);
-
         res.status(200).json(modifiedCategory);
     } catch (error) {
         next(error);

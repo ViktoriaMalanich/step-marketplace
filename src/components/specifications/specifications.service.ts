@@ -7,15 +7,6 @@ import { CreateProductDto } from "../products/product.dto";
 import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
 import { updateCategorySpecValues } from "../categories/categories.service";
 
-//export const findSpecificationList = async () => {
-// const specificationRepo = DBconnection.getRepository(Specification);
-// const specificationList = await specificationRepo
-//     //.find();
-//     .createQueryBuilder("specification")
-//     .getMany();
-
-// return specificationList;}
-
 export const findSpecificationList = async (categoryId?: number) => {
     const specs = await DBconnection
         .getRepository(Specification)
@@ -37,8 +28,6 @@ export const findSpecificationList = async (categoryId?: number) => {
     return result;
 };
 
-
-
 export const findOneSpecification = async (specificationIdOrName: number | string): Promise<Specification> => {
 
     console.log("specificationIdOrName", specificationIdOrName);
@@ -54,7 +43,6 @@ export const findOneSpecification = async (specificationIdOrName: number | strin
 
     return specification;
 }
-
 
 export const createSpecification = async (specification: Specification): Promise<Specification> => {
 
@@ -73,37 +61,6 @@ export const updateSpecification = async (specificationId: number, data: Partial
     return specification;
 }
 
-// export const updateCategorySpecifications = async (categoryId: number, newSpecIds: number[]) => {
-
-//   const specLinkRepo = DBconnection.getRepository(CategorySpecificationUniqValue);
-
-//   const existingLinks = await specLinkRepo.find({
-//     where: { category: { id: categoryId } },
-//     relations: ['specification'],
-//   });
-
-//   const existingSpecIds = existingLinks.map(link => link.specification.id);
-
-//   const toAdd = newSpecIds.filter(id => !existingSpecIds.includes(id));
-//   const toRemove = existingSpecIds.filter(id => !newSpecIds.includes(id));
-
-//   for (const id of toRemove) {
-//     await specLinkRepo.delete({
-//       category: { id: categoryId },
-//       specification: { id },
-//     });
-//   }
-
-//   for (const id of toAdd) {
-//     await specLinkRepo.save({
-//       category: { id: categoryId },
-//       specification: { id },
-//       uniqValues: [],
-//     });
-//   }
-// };
-
-
 export const removeSpecification = async (specificationId: number) => {
     const specificationRepo = DBconnection.getRepository(Specification);
     await specificationRepo
@@ -113,9 +70,6 @@ export const removeSpecification = async (specificationId: number) => {
         .where("id = :id", { id: specificationId })
         .execute();
 }
-
-/////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 export const getCategorySpecIds = async (categoryId: number): Promise<number[]> => {
@@ -158,9 +112,7 @@ export const updateCategorySpecifications = async (categoryId: number, newSpecId
     const toRemove = existingSpecIds.filter(id => !newSpecIds.includes(id));
 
     try {
-        // await removeCategorySpecifications(categoryId, toRemove);
-        // await addCategorySpecifications(categoryId, toAdd);
-
+       
         await DBconnection.transaction(async (manager) => {
             if (toRemove.length > 0) {
                 await manager.delete(CategorySpecificationUniqValue, {
@@ -172,7 +124,6 @@ export const updateCategorySpecifications = async (categoryId: number, newSpecId
                 const newLinks = toAdd.map(id => manager.create(CategorySpecificationUniqValue, ({
                     category: { id: categoryId },
                     specification: { id }
-                    // uniqValues: [],
                 })));
                 await manager.save(CategorySpecificationUniqValue, newLinks);
             }
@@ -184,7 +135,7 @@ export const updateCategorySpecifications = async (categoryId: number, newSpecId
     }
 };
 
-//дописать контроллер
+//TODO дописать контроллер
 export const findSpecUniqValueByCategory = async (categoryId: number) => {
     const specs = await DBconnection
         .getRepository(Specification)
@@ -199,7 +150,7 @@ export const findSpecUniqValueByCategory = async (categoryId: number) => {
 
     return specs.map(spec => ({
         name: spec.name,
-        uniqueValues: JSON.parse(spec.uniqueValues) // если строка
+        uniqueValues: JSON.parse(spec.uniqueValues) 
     }));
 };
 

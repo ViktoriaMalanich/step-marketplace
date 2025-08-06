@@ -20,7 +20,6 @@ interface ModifyHeaders extends Headers {
 
 export interface RequestWithUser extends Request {
     user?: Partial<User> | null;
-    //headers: ModifyHeaders
     headers: Request["headers"] & { authorization?: string };
 }
 
@@ -34,7 +33,7 @@ export const productStatusArray = ["IN STOKE", "ORDER", "OUT"] as const;
 export type STRIPE_METHODS_TYPES = "card";
 
 export interface StripeCardDetailsDto {
-    type: STRIPE_METHODS_TYPES; // card
+    type: STRIPE_METHODS_TYPES; 
     card: {
         number: string;
         exp_month: number;

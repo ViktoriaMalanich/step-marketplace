@@ -30,11 +30,11 @@ export class CategorySpecificationUniqValue {
         {
             onDelete: "CASCADE",
         })
-    @JoinColumn({ name: "specId" }) // <- указываем реальное имя столбца
+    @JoinColumn({ name: "specId" })
     specification!: Specification;
 
     @Column("json", { nullable: true })
-    uniqValue!: any[]; // или any[] если могут быть другие типы
+    uniqValue!: any[]; 
 
 
     @CreateDateColumn({ type: "timestamp" })

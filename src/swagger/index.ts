@@ -44,9 +44,4 @@ const swaggerUi = {
         }
     }
 };
-
-//  swaggerUi.paths["/categories"]
-
-
-
 export default swaggerUi;

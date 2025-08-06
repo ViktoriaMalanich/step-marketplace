@@ -20,10 +20,10 @@ export const findWishlist = async (userId: number): Promise<Product[]> => {
     for (const item of wishlist) {
         products.push(item.product);
     }
-    //return wishlist.map(entry => entry.product);
 
     return products;
 };
+
 
 export const findWishlistIds = async (userId: number): Promise<number[]> => {
 
@@ -39,14 +39,10 @@ export const findWishlistIds = async (userId: number): Promise<number[]> => {
 }
 
 
-
-
-
 export const addProductToWishlist = async (userId: number, productId: number): Promise<Product[]> => {
 
     const wishlistRepo = DBconnection.getRepository(Wishlist);
 
-    //const wishlist =
     await wishlistRepo
         .createQueryBuilder("wishlist")
         .insert()
@@ -55,9 +51,6 @@ export const addProductToWishlist = async (userId: number, productId: number): P
             product: { id: productId }
         })
         .execute();
-    // wishlistRepo
-    // .save({ userId, productId
-    // });
 
     const usersWislist = await findWishlist(userId);
 
@@ -74,4 +67,3 @@ export const removeProductFromWishlist = async (userId: number, productId: numbe
         .where("userId = :userId AND productId = :productId ", { userId, productId })
         .execute();
 }
-

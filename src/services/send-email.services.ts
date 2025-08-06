@@ -35,25 +35,9 @@ export const sendEmail = async (
         const result = await mailerSend.email.send(emailParams);
         console.log(result);
 
-    } catch (error: any) { //поискать правильный тип для ошибки
-
+    } catch (error: any) { 
         console.log(error);
         throw new ErrorHendler(error.statusCode, error.body.message);
-
     }
 
 }
-
-/**
- * const recipients = [
-  new Recipient("your@client.com", "Your Client")
-];
-
-const emailParams = new EmailParams()
-  .setFrom(sentFrom)
-  .setTo(recipients)
-  .setReplyTo(sentFrom)
-  .setSubject("This is a Subject")
-  .setHtml("<strong>This is the HTML content</strong>")
-  .setText("This is the text content");
- */

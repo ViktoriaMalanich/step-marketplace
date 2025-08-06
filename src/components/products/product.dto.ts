@@ -10,10 +10,10 @@ export interface CreateProductDto {
   marketId: number;
   categoryId: number;
   specValues: {
-    specId?: number;    // если спецификация уже существует
-    title?: string;     // если нужно создать новую
+    specId?: number;    
+    title?: string;     
     measurement?: string;
-    value: string;      // значение для этой спецификации
+    value: string;  
   }[];
 }
 
@@ -31,10 +31,8 @@ export interface UpdateProductDto {
     measurement?: string;
     value: string;        
   }[];
-  specIdsToDelete?: number[]; //что явно удалить
+  specIdsToDelete?: number[]; 
 }
-
-
 
  export interface ProductListDto{
   page?: number;

@@ -14,7 +14,6 @@ export class AddUniqueAndCascadeToCategorySpecUniqValue1750284488199 implements 
             await queryRunner.dropForeignKeys(this.tableName, oldFks);
         }
 
-        // Создаём FK с каскадным удалением
         await queryRunner.createForeignKeys(this.tableName, [
             new TableForeignKey({
                 columnNames: ["specId"],
@@ -32,7 +31,6 @@ export class AddUniqueAndCascadeToCategorySpecUniqValue1750284488199 implements 
             })
         ]);
 
-        // Добавляем уникальный индекс на пару (categoryId, specId)
         await queryRunner.query(`
             ALTER TABLE \`${this.tableName}\`
             ADD UNIQUE KEY \`UQ_category_spec_pair\` (\`categoryId\`, \`specId\`);
@@ -40,13 +38,11 @@ export class AddUniqueAndCascadeToCategorySpecUniqValue1750284488199 implements 
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        // Удаляем уникальный индекс
         await queryRunner.query(`
             ALTER TABLE \`${this.tableName}\`
             DROP INDEX \`UQ_category_spec_pair\`;
         `);
 
-        // Удаляем внешние ключи
         const table = await queryRunner.getTable(this.tableName);
         if (!table) throw new Error("Table not found");
 
@@ -57,5 +53,4 @@ export class AddUniqueAndCascadeToCategorySpecUniqValue1750284488199 implements 
             await queryRunner.dropForeignKeys(this.tableName, fks);
         }
     }
-
 }

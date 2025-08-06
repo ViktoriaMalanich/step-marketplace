@@ -17,7 +17,7 @@ export const postCart = async (req: Request, res: Response, next: NextFunction) 
         const userId = Number(req.params.userId);
         const items = req.body.items;
 
-        //сделать валидатор
+        //TODO create validator
         if (!userId || !Array.isArray(items) || items.length === 0) {
             throw new ErrorHendler(400, "Invalid data");
         }
@@ -32,13 +32,6 @@ export const postCart = async (req: Request, res: Response, next: NextFunction) 
 
 export const postPayForOrder = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        /**         
-       
-         * 5) Сделать транзакцию платежа
-         * 6) Обновить статус ордера
-         * 7) Вернуть ответ (модифицированный объектзаказа)
-         * 
-         */
 
         const paymentData = await findUserPaymentData(req.body.userId);
 

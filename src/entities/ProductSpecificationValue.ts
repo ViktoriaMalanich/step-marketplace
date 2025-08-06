@@ -29,7 +29,7 @@ export class ProductSpecificationValue {
         {
             onDelete: "CASCADE",
         })
-    @JoinColumn({ name: "specId" }) // <- указываем реальное имя столбца
+    @JoinColumn({ name: "specId" }) 
     specification!: Specification;
 
     @Column({ type: "varchar", length: 255 })

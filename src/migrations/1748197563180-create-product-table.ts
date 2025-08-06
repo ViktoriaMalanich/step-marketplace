@@ -3,8 +3,7 @@ import { MigrationInterface, QueryRunner, Table, TableForeignKey } from "typeorm
 export class CreateProduct1748197563180 implements MigrationInterface {
     private readonly tableName = "product";
 
-    public async up(queryRunner: QueryRunner): Promise<void> {
-        // Создаем таблицу product
+    public async up(queryRunner: QueryRunner): Promise<void> {      
         await queryRunner.createTable(
             new Table({
                 name: this.tableName,

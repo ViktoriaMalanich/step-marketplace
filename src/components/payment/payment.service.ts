@@ -44,8 +44,6 @@ export const findUserPaymentData = async (userId: number): Promise<any> => {
 
     return payment;
 }
-///////////////////////////////////////////////////////
-
 
 export const savePaymentMethod = async (
     user_id: number,
@@ -80,12 +78,6 @@ export const savePaymentMethod = async (
 
 export const removeUserPayment = async (userId: number) => {
     const paymentRepo = DBconnection.getRepository(Payment);
-    // await paymentRepo
-    //     .createQueryBuilder()
-    //     .delete()
-    //     .from(Payment)
-    //     .where("userId = :userId", { userId })
-    //     .execute();
 
     const payment = await paymentRepo.findOneBy({ userId });
 

@@ -7,9 +7,6 @@ export const findMarketList = async () => {
     const marketRepo = DBconnection.getRepository(Market);
     const marketList = await marketRepo
         .find();
-    // .createQueryBuilder("Market")
-    // .getMany();
-
     return marketList;
 }
 
@@ -65,13 +62,8 @@ export const updateMarket = async (marketId: number, data: Partial<Market>): Pro
 
 
 export const removeMarket = async (marketId: number) => {
-    const marketRepo = DBconnection.getRepository(Market);
-    // await marketRepo
-    //     .createQueryBuilder()
-    //     .delete()
-    //     .from(Market)
-    //     .where("id = :id", { id: marketId })
-    //     .execute();
+
+    const marketRepo = DBconnection.getRepository(Market); 
 
     const market = await marketRepo.findOneBy({ id: marketId });
 
@@ -86,17 +78,15 @@ export const updateMarketPhoto = async (
     marketId: number,
     file: Express.Multer.File
 ): Promise<Market> => {
+
     const marketRepo = DBconnection.getRepository(Market);
 
     const existingMarket = await marketRepo.findOneBy({ id: marketId });
     if (!existingMarket) {
         throw new ErrorHendler(404, 'Market not found');
     }
-
-    // Загружаем файл в Cloudinary
-    const uploadedImage = await uploadImage(file.path); // file.path — путь от multer
-    await deletePhotoes([existingMarket.img]);
-    // Сохраняем новый URL, не трогая старое фото
+    const uploadedImage = await uploadImage(file.path); 
+    await deletePhotoes([existingMarket.img]);    
     const updatedMarket = await marketRepo.save({
         ...existingMarket,
         img: uploadedImage.secure_url,

@@ -113,7 +113,6 @@ export const updateCategorySpecsList = async (
         throw new ErrorHendler(400, 'Specifications can only be assigned to subcategories (categories that have a parent).');
     }
 
-    // Удаляем поля, не относящиеся к сущности Category напрямую
     const {
         categorySpecifications,
         addSpecifications,
@@ -121,18 +120,11 @@ export const updateCategorySpecsList = async (
         ...updateData
     } = data;
 
-    // console.log('до обновления updateData:', updateData);
-
-    // Обновляем поля категории
-    //await categoryRepo.update(categoryId, data);
 
     if (Object.keys(updateData).length > 0) {
         await categoryRepo.save({ id: categoryId, ...updateData });
     }
 
-    //console.log('после обновления updateData:', updateData);
-
-    // Обновляем привязку спецификаций, если переданы
     if (categorySpecifications) {
         await updateCategorySpecifications(categoryId, categorySpecifications);
     }
@@ -159,11 +151,6 @@ export const removeCategory = async (categoryId: number) => {
         .execute();
 }
 
-
-/**
- * Обновляет массив уникальных значений для пары категория-спецификация.
- * Если пары не существует — создаёт новую запись.
- */
 export const updateCategorySpecValues = async (
     manager: EntityManager,
     categoryId: number,
@@ -180,7 +167,6 @@ export const updateCategorySpecValues = async (
     });
 
     if (!record) {
-        // создаём новую пару, если не существует
         record = manager.create(CategorySpecificationUniqValue, {
             category: { id: categoryId } as Category,
             specification: { id: specId } as Specification,
@@ -189,11 +175,7 @@ export const updateCategorySpecValues = async (
         await manager.save(record);
         return;
     }
-
-    // если значение уже есть — ничего не делаем
     if (record.uniqValue?.includes(value)) return;
-
-    // добавляем новое значение
     record.uniqValue = [...(record.uniqValue || []), value];
     await manager.save(record);
 };
@@ -210,10 +192,8 @@ export const updateCategoryPhoto = async (
         throw new ErrorHendler(404, 'Category is not found');
     }
 
-    // Загружаем файл в Cloudinary
-    const uploadedImage = await uploadImage(file.path); // file.path — путь от multer
+    const uploadedImage = await uploadImage(file.path); 
     await deletePhotoes([existingCategory.img]);
-    // Сохраняем новый URL, не трогая старое фото
     const updatedCategory = await categoryRepo.save({
         ...existingCategory,
         img: uploadedImage.secure_url,

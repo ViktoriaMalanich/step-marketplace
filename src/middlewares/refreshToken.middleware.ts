@@ -7,8 +7,7 @@ import { User } from "../entities/User";
 
 
 export const newToken = (req: Request, res: Response, next: NextFunction) => {
-
-    //const user = req.user as IUserPayload;
+    
     const user = (req as unknown as RequestWithUser).user as Partial<User>;
 
     if (!user) {

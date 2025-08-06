@@ -6,7 +6,7 @@ import {
   JoinColumn,
   CreateDateColumn,
 } from "typeorm";
-import { User } from "./User"; // путь поправь под свой проект
+import { User } from "./User"; 
 
 @Entity("payment_methods")
 export class PaymentMethod {

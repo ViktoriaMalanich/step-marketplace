@@ -1,11 +1,7 @@
 import { ErrorHendler } from "../../classes/ErrorHandler";
 import { DBconnection } from "../../dbconnection";
-// import { CategorySpecificationUniqValue } from "../../entities/CategorySpecificationUniqValue";
 import { Product } from "../../entities/Product";
 import { ProductSpecificationValue } from "../../entities/ProductSpecificationValue";
-// import { Specification } from "../../entities/Specification";
-// import { updateCategorySpecValues } from "../categories/categories.service";
-// import { getCategorySpecIds } from "../specifications/specification.service";
 import { CreateProductDto, ProductListDto, UpdateProductDto } from "./product.dto";
 import { createProductSpecValues, updateProductSpecValues } from "./product-spec-values.service";
 import { deletePhotoes } from "../../services/cloudinary.service";
@@ -22,9 +18,6 @@ export const findProductsByIdList = async (ids: number[]): Promise<Product[]> =>
 
     return products;
 }
-
-
-//параметры приходятв ф-цию
 
 export const findProductList = async (params: any) => {
     const {
@@ -73,8 +66,6 @@ export const findProductList = async (params: any) => {
     subQuery
         .groupBy('sv.productId')
         .having('COUNT(DISTINCT s.id) = :count', { count: criterias.length });
-
-
 
     const productRepo = DBconnection.getRepository(Product);
 
@@ -134,15 +125,6 @@ export const findOneProduct = async (productIdOrName: number | string): Promise<
 
     return product;
 }
-
-
-// export const createProduct = async (product: Product): Promise<Product> => {
-
-//     const productRepo = DBconnection.getRepository(Product);
-//     const newProduct = await productRepo.save(product);
-//     return newProduct;
-// }
-
 
 export const createProduct = async (productData: CreateProductDto): Promise<Product> => {
     const {
@@ -208,16 +190,6 @@ export const updateProductPhotoes = async (productId: number, images: any[]): Pr
 }
 
 export const deleteProductPhoto = async (productId: number, photoesIds: string[]) => {
-    /**
-     * Принимает айди продукта из урла
-     * Принимаем массив айди фотографий, которіе надо удалить ?из квери параметров(обязательній параметр)
-     * По айди продукта достаем продукт (если существует)
-     * Тянемся к полю фотографий
-     * По айди фотографий находим те, которые надо удалить из бд
-     * По ним же удаляем фото из облака
-     * сохраняем обновленный продукт
-     * возвращаем модифицированный продукт//делит вернет - редкий случай
-     */
 
     const productRepo = DBconnection.getRepository(Product);
     const existingProduct = await productRepo.findOneBy({ id: productId });
@@ -253,20 +225,11 @@ export const updateProduct = async (
         console.log("existingProduct!!!", existingProduct);
         console.log("data!!!", data);
 
-        // Обновляем сам продукт
-        // await productRepo.save({
-        //   ...existingProduct,
-        //   ...data
-        // });
-
-        // Обновляем сам продукт
         await productRepo.save({
             id: productId,
             ...{ price: data.price }
         });
 
-
-        // Спецификации
         if (data.specValues || data.specIdsToDelete) {
             const finalCategoryId =
                 data.categoryId ?? existingProduct.categoryId;
@@ -280,7 +243,6 @@ export const updateProduct = async (
             );
         }
 
-        // Возвращаем с подгруженными связями
         return await manager.findOneOrFail(Product, {
             where: { id: productId },
             relations: [
@@ -296,12 +258,6 @@ export const updateProduct = async (
 
 export const removeProduct = async (productId: number) => {
     const productRepo = DBconnection.getRepository(Product);
-    // await productRepo
-    //     .createQueryBuilder()
-    //     .delete()
-    //     .from(Product)
-    //     .where("id = :id", { id: productId })
-    //     .execute();
 
     const product = await productRepo.findOneBy({ id: productId });
 
@@ -311,16 +267,3 @@ export const removeProduct = async (productId: number) => {
 
     await productRepo.delete(productId);
 }
-
-// export const updateProductImages = async (
-//     productId: number,
-//     imageObjects: { public_id: string; secure_url: string }[]) => {
-//     const productRepo = DBconnection.getRepository(Product);
-//     const updateResult = await productRepo.update(productId, { img: imageObjects });
-
-//     if (updateResult.affected === 0) {
-//         throw new Error('Product not found');
-//     }
-// };
-
-

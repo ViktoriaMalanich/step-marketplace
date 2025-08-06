@@ -141,7 +141,7 @@ const categoryPath = {
                     description: "Invalid input"
                 },
                 "404": {
-                    description: "Category not found"//выдает ошибку 500
+                    description: "Category not found"
                 }
             }
         },

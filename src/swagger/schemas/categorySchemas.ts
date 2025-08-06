@@ -9,7 +9,6 @@ export const Category = {
             type: "string",
             example: "cosmetics",
             description: "Name of category",
-            // required: true
         },
         "description": {
             "type": "string",
@@ -53,7 +52,6 @@ export const InputCategory = {
             type: "string",
             example: "cosmetics",
             description: "Name of category",
-            // required: true
         },
         description: {
             type: "string",

@@ -40,7 +40,7 @@ export const productListQueryValidation = validation.object({
       .min(1, { message: "Limit number must be positive" })
   ).optional(),
 
-  //обсудить какие поля используем для сортировки TODO заменить стринг на энам
+  //обсудить какие поля используем для сортировки TODO 
   orderBy: validation.string().optional(),
 
   order: validation.enum(["ASC", "DESC"]).default("ASC").optional(),

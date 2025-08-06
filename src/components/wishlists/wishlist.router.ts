@@ -7,7 +7,6 @@ import { checkWishlistDuplicate } from "../../middlewares/wishlist.middleware";
 const router: Router = Router();
 
 router.get("/:userId", getUsersWishlist);
-//newToken, 
 
 router.get("/:userId/ids", getUsersWishlistIds);
 

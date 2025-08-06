@@ -83,11 +83,7 @@ export const deleteMarket = async (req: Request, res: Response, next: NextFuncti
 export const uploadMarketPhoto = async (req: Request, res: Response, next: NextFunction) => {
     try {
 
-        //console.log('req.params:!!!!!!!!!', req.params);
-
         const marketId = Number(req.params.marketId);
-
-        // console.log('marketId:!!!!!!!!!', marketId);
 
         if (isNaN(marketId)) {
             throw new ErrorHendler(400, 'Invalid market ID');
@@ -96,9 +92,7 @@ export const uploadMarketPhoto = async (req: Request, res: Response, next: NextF
         if (!req.file) {
             res.status(400).json({ message: 'File is required' });
         }
-
-        //console.log('Received file:', req.file);
-
+        
         const file = req.file;
         if (!file) {
             res.status(400).json({ message: 'File is required' });

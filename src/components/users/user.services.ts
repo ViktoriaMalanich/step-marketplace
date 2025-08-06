@@ -62,16 +62,3 @@ export const createUser = async (data: any): Promise<User> => {
 
     return user;
 }
-
-// export const getUserByCredentials = async (login: string, password: string): Promise<User> => {
-//     const userRepo = DBconnection.getRepository(User);
-//     const query = userRepo.createQueryBuilder('user');
-//     query.where('(user.email = :login or user.phoneNumber = :login) and user.password = :password', { login, password });
-//     const user = await query.getOne();
-
-//     if (!user) {
-//         throw new Error('User not found');
-//     }
-
-//     return user;
-// }

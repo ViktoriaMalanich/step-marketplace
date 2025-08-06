@@ -1,8 +1,5 @@
 import { LETTER_TYPE } from "../../types";
-import { subjects } from "./subjects";
 
-//subject
-//option
 export const getTemplates = (
     letterType: LETTER_TYPE,
     options?: any
@@ -30,8 +27,6 @@ export const getTemplates = (
         default:
             letter = "Wrong template";
     }
-
-    //letter += "<p> "
 
     return letter;
 }

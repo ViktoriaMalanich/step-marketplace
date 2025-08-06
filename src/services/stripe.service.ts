@@ -36,7 +36,6 @@ export const addCard = async (
         await stripe.paymentMethods
             .attach(paymentMethodId, { customer: customerStripeId });
 
-        // Назначаем как способ по умолчанию
         await stripe.customers.update(customerStripeId, {
             invoice_settings: {
                 default_payment_method: paymentMethodId
@@ -54,20 +53,19 @@ export const addCard = async (
 }
 
 export const createPaymentIntent = async (
-    //'payment method id', 'customer payment stripe id'
     paymentMethodId: string,
     stripeId: string,
     amount: number
 ) => {
     try {
         const paymentIntent = await stripe.paymentIntents.create({
-            amount, // сумма в пенсах (£50.00 = 5000)
+            amount, 
             currency: 'gbp',
             payment_method: paymentMethodId,
-            confirm: true,                   // подтвердить и провести платёж
+            confirm: true,                  
             customer: stripeId,
             description: 'Online purchase',
-            receipt_email: 'vmalanich290806@gmail.com', // <- клиент получит квитанцию
+            receipt_email: 'vmalanich290806@gmail.com', 
             automatic_payment_methods: {
                 enabled: true,
                 allow_redirects: 'never'
@@ -85,6 +83,3 @@ export const createPaymentIntent = async (
     }
 
 }
-//создать урл в роу,тере передать параметрами юзер айди плательщика и сумму
-
-//createPaymentIntent().catch(console.error);

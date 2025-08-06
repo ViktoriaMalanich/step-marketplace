@@ -22,7 +22,6 @@ import { RequestWithUser } from "../../types";
 export const getUserList = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const queryParams = req.query;
-        // console.log(queryParams);
         const users = await findUserList();
         res.status(200).json(users);
     } catch (error) {
@@ -49,12 +48,10 @@ export const putUserData = async (req: Request, res: Response, next: NextFunctio
         if (!user) {
             throw new ErrorHendler(404, "User not found");
         }
-        // console.log("req.body", req.body);
         const validatedData = updateUserValidator.parse(req.body);
-        //  console.log("Валидэйтед дата", validatedData);s
-        const userId = req.params.id; //из url
-        // console.log("userId, req.params.id", userId, req.params.id);
-
+       
+        const userId = req.params.id; 
+       
         const updatedUser = await updateUser(Number(userId), validatedData);
         res.status(200).json({ ...updatedUser });
     } catch (error) {
@@ -64,23 +61,12 @@ export const putUserData = async (req: Request, res: Response, next: NextFunctio
 };
 
 
-//res.status(200).json({});
-/**
- * 0) Проверка прав доступа к этому эндпоинт!!!
- * 1) Сопоставить данные с полями юзера -  Валидация
- * 2) Обновить те данные, которые хочет обновить пользователь
- * 3) Если все успешно, вернуть результат клиенту.
- * 4) В случае ошибки сделать исключение
- */
-//}
-
 export const postUserData = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const userData = req.body;
         const parseResult = createUserValidator.parse(userData);
 
         parseResult.password = createHash(parseResult.password);
-        //console.log("parseResult", parseResult);
         const user = await createUser(parseResult);
         if (user) {
             delete user.password;
@@ -140,7 +126,7 @@ export const requestResetPassword = async (req: Request, res: Response, next: Ne
         const user = await getUserByEmail(validEmail.email);
 
         if (!user) {
-            throw new ErrorHendler(400, "User not found "); //обсудить
+            throw new ErrorHendler(400, "User not found "); 
         }
 
         await sendEmail(

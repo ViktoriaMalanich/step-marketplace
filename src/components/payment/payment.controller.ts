@@ -44,7 +44,7 @@ export const deleteStripeCustomer = async (req: Request, res: Response, next: Ne
         await removeUserPayment(userId);
 
         res.status(204).send();
-        //.status(200).json({ deletedCustomer });
+       
     } catch (error) {
         next(error);
     }
@@ -61,29 +61,6 @@ export const createStripeCard = async (req: Request, res: Response, next: NextFu
         if (!payment) {
             throw new ErrorHendler(400, "User payment data not found");
         }
-
-        // const card = {
-        //     type: 'card' as STRIPE_METHODS_TYPES,
-        //     card: {
-        //         number: "42424242424242424",
-        //         exp_month: 12,
-        //         exp_year: 2035,
-        //         cvc: "000"
-        //     }
-        // }
-
-        // await stripe.paymentMethods.attach(paymentMethodId, {
-        //     customer: payment.stripeId,
-        // });
-
-        
-        // await stripe.customers.update(payment.stripeId, {
-        //     invoice_settings: {
-        //         default_payment_method: paymentMethodId,
-        //     },
-        // });
-
-        //const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
 
         const paymentMethod = await addCard(payment.stripeId, paymentMethodId);
 
