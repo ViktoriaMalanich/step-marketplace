@@ -1,23 +1,16 @@
 import { Request, Response, NextFunction } from 'express';
 import { findMarketSalesTotal, getPaidOrdersTotal } from './statistics.service';
 import { ErrorHendler } from '../../classes/ErrorHandler';
+import { ordersStatisticsQueryValidator } from './statistics.validator';
+import { findOneMarket } from '../markets/market.service';
+
 
 export const getOrdersTotal = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { startDate, endDate } = req.query;
-
-        if (startDate && isNaN(Date.parse(startDate as string))) {
-            throw new ErrorHendler(400, 'Invalid startDate format');
-        }
-        if (endDate && isNaN(Date.parse(endDate as string))) {
-            throw new ErrorHendler(400, 'Invalid endDate format');
-        }
-
-        const start = startDate ? new Date(String(startDate)) : undefined;
-        const end = endDate ? new Date(String(endDate)) : undefined;
-
-        const totalAmount = await getPaidOrdersTotal(start, end);
-
+        const validQuery = ordersStatisticsQueryValidator.parse(req.query);
+        const { startDate, endDate } = validQuery;
+        console.log({ startDate, endDate });
+        const totalAmount = await getPaidOrdersTotal(startDate, endDate);
         res.status(200).json({ totalAmount });
     } catch (error) {
         next(error);
@@ -28,27 +21,19 @@ export const getMarketSalesTotal = async (req: Request, res: Response, next: Nex
     try {
 
         const marketId = Number(req.params.marketId);
-        console.log(marketId);
-        const {startDate, endDate } = req.query;
+        const market = findOneMarket(marketId);
 
-        if (!marketId) {
-            throw new ErrorHendler(400, 'marketId parameter is required');
+        if (!market) {
+            throw new ErrorHendler(400, 'Invalid marketId');
         }
 
-        if (startDate && isNaN(Date.parse(startDate as string))) {
-            throw new ErrorHendler(400, 'Invalid startDate format');
-        }
+        const validQuery = ordersStatisticsQueryValidator.parse(req.query);
 
-        if (endDate && isNaN(Date.parse(endDate as string))) {
-            throw new ErrorHendler(400, 'Invalid endDate format');
-        }
+        const { startDate, endDate } = validQuery;
 
-        const start = startDate ? new Date(String(startDate)) : undefined;
-        const end = endDate ? new Date(String(endDate)) : undefined;
+        const totalAmount = await findMarketSalesTotal(marketId, startDate, endDate);
 
-        const totalSales = await findMarketSalesTotal(marketId, start, end);
-
-        res.status(200).json({ totalSales });
+        res.status(200).json({ totalAmount });
     } catch (error) {
         next(error);
     }

@@ -59,7 +59,7 @@ After starting the server, open your browser:
 http://localhost:8080/api-docs/
 ```
 ### Test Stripe payment integration (optional)
-http://localhost:8080/stripe-test.html?userId=1
+http://localhost:8080/stripe-test.html?userId={:userId}
 
 
 # Notes
